@@ -1,0 +1,12 @@
+{
+  "name": "typesafe-joi",
+  "version": "1.0.0",
+  "main": "joi.js",
+  "types": "joi.d.ts",
+  "repository": "https://github.com/hjkcai/typesafe-joi.git",
+  "author": "Jingkun Hua<huajingkun1214@gmail.com>",
+  "license": "MIT",
+  "peerDependencies": {
+    "joi": "^14.0.0"
+  }
+}
