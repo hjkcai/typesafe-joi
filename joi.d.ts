@@ -182,20 +182,24 @@ interface AbstractSchema<Schema extends AbstractSchema = any, Value = any> exten
   validate (value: any, callback: (err: ValidationError, value: Value | MaybeUndefined<Schema>) => void): void
   validate (value: any, options: ValidationOptions, callback: (err: ValidationError, value: Value | MaybeUndefined<Schema>) => void): void
 
-  // WARNING: inconsistent-types
   /** Whitelists a value */
+  allow<T extends AnyType[]> (values: T): SchemaType<Schema, Value | T[number]>
   allow<T extends AnyType[]> (...values: T): SchemaType<Schema, Value | T[number]>
 
-  // WARNING: narrow-then-expand, inconsistent-types
   /** Adds the provided values into the allowed whitelist and marks them as the only valid values allowed. */
+  valid<T extends AnyType[]> (values: T): SchemaType<Schema, T[number]>
   valid<T extends AnyType[]> (...values: T): SchemaType<Schema, T[number]>
+  only<T extends AnyType[]> (values: T): SchemaType<Schema, T[number]>
   only<T extends AnyType[]> (...values: T): SchemaType<Schema, T[number]>
+  equal<T extends AnyType[]> (values: T): SchemaType<Schema, T[number]>
   equal<T extends AnyType[]> (...values: T): SchemaType<Schema, T[number]>
 
-  // WARNING: inconsistent-types
   /** Blacklists a value */
+  invalid<T extends AnyType[]> (values: T): SchemaType<Schema, T[number] extends never ? Value : Exclude<Value, T[number]>>
   invalid<T extends AnyType[]> (...values: T): SchemaType<Schema, T[number] extends never ? Value : Exclude<Value, T[number]>>
+  disallow<T extends AnyType[]> (values: T): SchemaType<Schema, T[number] extends never ? Value : Exclude<Value, T[number]>>
   disallow<T extends AnyType[]> (...values: T): SchemaType<Schema, T[number] extends never ? Value : Exclude<Value, T[number]>>
+  not<T extends AnyType[]> (values: T): SchemaType<Schema, T[number] extends never ? Value : Exclude<Value, T[number]>>
   not<T extends AnyType[]> (...values: T): SchemaType<Schema, T[number] extends never ? Value : Exclude<Value, T[number]>>
 
   /** Returns a new type that is the result of adding the rules of one type to another. */
@@ -350,7 +354,6 @@ interface NonSparseSchema {
   [IS_SPARSE]: false
 }
 
-// WARNING: narrow-then-expand
 export interface ArraySchema<Value = never[]>
   extends OptionalSchema, NonSparseSchema, ArraySchemaType<ArraySchema, Value> {}
 
@@ -409,6 +412,7 @@ interface ArraySchemaType<Schema extends AbstractSchema = any, Value = never[]> 
    *
    * @param type - a joi schema object to validate each array item against.
    */
+  items<T extends SchemaLike[]> (types: T): SchemaType<Schema, MergeArray<Value, ExcludeUndefined<SchemaValues<T>>>>
   items<T extends SchemaLike[]> (...types: T): SchemaType<Schema, MergeArray<Value, ExcludeUndefined<SchemaValues<T>>>>
 
   /**
@@ -418,6 +422,7 @@ interface ArraySchemaType<Schema extends AbstractSchema = any, Value = never[]> 
    * Errors will contain the number of items that didn't match.
    * Any unmatched item having a label will be mentioned explicitly.
    */
+  ordered<T extends SchemaLike[]> (types: T): SchemaType<Schema, MergeArray<Value, ExcludeUndefined<SchemaValues<T>>>>
   ordered<T extends SchemaLike[]> (...types: T): SchemaType<Schema, MergeArray<Value, ExcludeUndefined<SchemaValues<T>>>>
 
   /**
@@ -443,6 +448,7 @@ interface SparseArraySchemaType<Schema extends AbstractSchema = any, Value = nev
    *
    * @param type - a joi schema object to validate each array item against.
    */
+  items<T extends SchemaLike[]> (types: T): SchemaType<Schema, MergeArray<Value, SchemaValues<T> | undefined>>
   items<T extends SchemaLike[]> (...types: T): SchemaType<Schema, MergeArray<Value, SchemaValues<T> | undefined>>
 
   /**
@@ -452,6 +458,7 @@ interface SparseArraySchemaType<Schema extends AbstractSchema = any, Value = nev
    * Errors will contain the number of items that didn't match.
    * Any unmatched item having a label will be mentioned explicitly.
    */
+  ordered<T extends SchemaLike[]> (types: T): SchemaType<Schema, MergeArray<Value, SchemaValues<T> | undefined>>
   ordered<T extends SchemaLike[]> (...types: T): SchemaType<Schema, MergeArray<Value, SchemaValues<T> | undefined>>
 
   /**
@@ -674,7 +681,6 @@ interface NumberSchemaType<Schema extends AbstractSchema = any, Value = number> 
 
 // ObjectSchema ---------------------------------------------------------------
 
-// WARNING: narrow-then-expand
 export interface ObjectSchema<Value = {}> extends OptionalSchema, ObjectSchemaType<ObjectSchema, Value> {}
 export interface RequiredObjectSchema<Value = {}> extends RequiredSchema, ObjectSchemaType<RequiredObjectSchema, Value> {}
 interface ObjectSchemaType<Schema extends AbstractSchema = any, Value = {}> extends AbstractSchema<Schema, Value> {
@@ -1346,9 +1352,11 @@ export function object<T extends SchemaMap = {}> (schema?: T): ObjectSchema<Sche
 export function string (): StringSchema
 
 /** Generates a type that will match one of the provided alternative schemas */
+export function alternatives<T extends SchemaLike[]> (types: T): AlternativesSchema<SchemaValues<T>>
 export function alternatives<T extends SchemaLike[]> (...types: T): AlternativesSchema<SchemaValues<T>>
 
 /** Generates a type that will match one of the provided alternative schemas */
+export function alt<T extends SchemaLike[]> (types: T): AlternativesSchema<SchemaValues<T>>
 export function alt<T extends SchemaLike[]> (...types: T): AlternativesSchema<SchemaValues<T>>
 
 /**
