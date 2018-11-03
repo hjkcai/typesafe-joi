@@ -110,6 +110,12 @@ Joi.object({ foo: Joi.string() }).valid(1, '2', true)
 
 You'd better let TypeScript know everything. So do *not* use a single array as the only argument on methods like `.allow`, `.disallow`, etc.
 
+### `presence` *must* be `optional`
+
+TypeScript has no way to know your `presence` setting statically. I have to choose one of the three values of `presence` to implement. That is why the examples above have `undefined` type with them if `.required` is not called.
+
+The implementation of the `presence` is really tricky, especially the implementation of optional object key. So far the type parameter of `ObjectSchema` will be very messy. See `SchemaMapValue` if you are interested in the reason.
+
 ## Help me improve
 
 Sorry but I do not have enough time to write a unit test for it. Please feel free to open an issue when you find bugs or suggestions. I am glad to help!
