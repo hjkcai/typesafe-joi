@@ -178,9 +178,9 @@ interface AbstractSchema<Schema extends AbstractSchema = any, Value = any> exten
   schemaType: string
 
   /** Validates a value using the schema and options. */
-  validate (value: any, options?: ValidationOptions): ValidationResult<Value>
-  validate (value: any, callback: (err: ValidationError, value: Value) => void): void
-  validate (value: any, options: ValidationOptions, callback: (err: ValidationError, value: Value) => void): void
+  validate (value: any, options?: ValidationOptions): ValidationResult<Value | MaybeUndefined<Schema>>
+  validate (value: any, callback: (err: ValidationError, value: Value | MaybeUndefined<Schema>) => void): void
+  validate (value: any, options: ValidationOptions, callback: (err: ValidationError, value: Value | MaybeUndefined<Schema>) => void): void
 
   // WARNING: inconsistent-types
   /** Whitelists a value */
@@ -1271,6 +1271,12 @@ type AnyType = string | number | boolean | symbol | object | null | undefined
 type ConstructorOf<T> = new (...args: any[]) => T
 type ExcludeUndefined<T> = Exclude<T, undefined>
 type ArrayItemType<T> = T extends (infer U)[] ? U : never
+
+type MaybeUndefined<T extends AbstractSchema> = (
+  T extends RequiredSchema
+  ? never
+  : undefined
+)
 
 /** Find keys that its value extends `U` of an object */
 type FilterKeys<T extends object, U> = { [key in keyof T]: T[key] extends U ? key : never }[keyof T]
