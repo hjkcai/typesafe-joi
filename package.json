@@ -1,5 +1,6 @@
 {
   "name": "typesafe-joi",
+  "description": "A fork of joi that produces typed validation results in TypeScript",
   "version": "1.0.0",
   "main": "joi.js",
   "types": "joi.d.ts",
