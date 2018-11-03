@@ -50,7 +50,7 @@ export type Schema<Value = any> = (
  * Assemble `Schema` and `Value` into `Schema<Value>`
  * @description This is useful in the interface `SchemaMethods` (but a little bit tedious)
  */
-export type SchemaType<Schema extends AbstractSchema, Value> = (
+type SchemaType<Schema extends AbstractSchema, Value> = (
     Schema extends AnySchema ? AnySchema<Value>
   : Schema extends ArraySchema ? ArraySchema<Value>
   : Schema extends SparseArraySchema ? SparseArraySchema<Value>
@@ -82,7 +82,7 @@ export type SchemaType<Schema extends AbstractSchema, Value> = (
 )
 
 /** Change `Schema` to `RequiredSchema` */
-export type RequiredSchemaType<Schema extends AbstractSchema, Value> = (
+type RequiredSchemaType<Schema extends AbstractSchema, Value> = (
     Schema extends AnySchema ? RequiredAnySchema<Value>
   : Schema extends ArraySchema ? RequiredArraySchema<Value>
   : Schema extends SparseArraySchema ? RequiredSparseArraySchema<Value>
@@ -100,7 +100,7 @@ export type RequiredSchemaType<Schema extends AbstractSchema, Value> = (
 )
 
 /** Change `RequiredSchema` to `Schema` */
-export type OptionalSchemaType<Schema extends AbstractSchema, Value> = (
+type OptionalSchemaType<Schema extends AbstractSchema, Value> = (
     Schema extends RequiredAnySchema ? AnySchema<Value>
   : Schema extends RequiredArraySchema ? ArraySchema<Value>
   : Schema extends RequiredSparseArraySchema ? SparseArraySchema<Value>
@@ -144,18 +144,18 @@ export type SchemaValue<Schema extends SchemaLike> = (
  * @description If a key is not `RequiredXXXSchema`, it will be marked as optional.
  * @example SchemaMapValue<{ a: StringSchema, b: RequiredStringSchema }> = { a?: string, b: string }
  */
-export type SchemaMapValue<Map extends SchemaMap> = (
+type SchemaMapValue<Map extends SchemaMap> = (
   SchemaMapLiteral<Filter<Map, RequiredSchema>>
   & Partial<SchemaMapLiteral<FilterOut<Map, RequiredSchema>>>
 )
 
 /** Convert every entry in a `SchemaMap` into literal */
-export type SchemaMapLiteral<Map /* extends SchemaMap */> = {     // `Map` cannot extends `SchemaMap` because `Filter` type does not return `SchemaMap`
+type SchemaMapLiteral<Map /* extends SchemaMap */> = {     // `Map` cannot extends `SchemaMap` because `Filter` type does not return `SchemaMap`
   [key in keyof Map]: Map[key] extends SchemaLike ? SchemaValue<Map[key]> : never
 }
 
 /** Extract the value types of multiple `SchemaLike`s */
-export type SchemaValues<Schemas extends SchemaLike[]> = SchemaValue<Schemas[number]>
+type SchemaValues<Schemas extends SchemaLike[]> = SchemaValue<Schemas[number]>
 
 // ----------------------------------------------------------------------------
 // Schema and schema methods definition
@@ -174,7 +174,7 @@ interface OptionalSchema {
   [IS_REQUIRED]: false
 }
 
-export interface AbstractSchema<Schema extends AbstractSchema = any, Value = any> extends JoiObject {
+interface AbstractSchema<Schema extends AbstractSchema = any, Value = any> extends JoiObject {
   schemaType: string
 
   /** Validates a value using the schema and options. */
@@ -333,7 +333,7 @@ export interface AbstractSchema<Schema extends AbstractSchema = any, Value = any
 
 export interface AnySchema<Value = any> extends OptionalSchema, AnySchemaType<AnySchema, Value> {}
 export interface RequiredAnySchema<Value = any> extends RequiredSchema, AnySchemaType<RequiredAnySchema, Value> {}
-export interface AnySchemaType<Schema extends AbstractSchema = any, Value = any> extends AbstractSchema<Schema, Value> {
+interface AnySchemaType<Schema extends AbstractSchema = any, Value = any> extends AbstractSchema<Schema, Value> {
   schemaType: 'any'
 }
 
@@ -363,7 +363,7 @@ export interface SparseArraySchema<Value = never[]>
 export interface RequiredSparseArraySchema<Value = never[]>
   extends RequiredSchema, SparseSchema, SparseArraySchemaType<RequiredSparseArraySchema, Value> {}
 
-export interface BaseArraySchemaType<Schema extends AbstractSchema = any, Value = never[]> extends AbstractSchema<Schema, Value> {
+interface BaseArraySchemaType<Schema extends AbstractSchema = any, Value = never[]> extends AbstractSchema<Schema, Value> {
   schemaType: 'array'
 
   /**
@@ -397,7 +397,7 @@ export interface BaseArraySchemaType<Schema extends AbstractSchema = any, Value 
   unique (comparator: (a: ArrayItemType<Value>, b: ArrayItemType<Value>) => boolean): this
 }
 
-export interface ArraySchemaType<Schema extends AbstractSchema = any, Value = never[]> extends BaseArraySchemaType<Schema, Value> {
+interface ArraySchemaType<Schema extends AbstractSchema = any, Value = never[]> extends BaseArraySchemaType<Schema, Value> {
   /**
    * List the types allowed for the array values.
    * type can be an array of values, or multiple values can be passed as individual arguments.
@@ -431,7 +431,7 @@ export interface ArraySchemaType<Schema extends AbstractSchema = any, Value = ne
   )
 }
 
-export interface SparseArraySchemaType<Schema extends AbstractSchema = any, Value = never[]> extends BaseArraySchemaType<Schema, Value> {
+interface SparseArraySchemaType<Schema extends AbstractSchema = any, Value = never[]> extends BaseArraySchemaType<Schema, Value> {
   /**
    * List the types allowed for the array values.
    * type can be an array of values, or multiple values can be passed as individual arguments.
@@ -469,7 +469,7 @@ export interface SparseArraySchemaType<Schema extends AbstractSchema = any, Valu
 
 export interface BooleanSchema<Value = boolean> extends OptionalSchema, BooleanSchemaType<BooleanSchema, Value> {}
 export interface RequiredBooleanSchema<Value = boolean> extends RequiredSchema, BooleanSchemaType<RequiredBooleanSchema, Value> {}
-export interface BooleanSchemaType<Schema extends AbstractSchema = any, Value = boolean> extends AbstractSchema<Schema, Value> {
+interface BooleanSchemaType<Schema extends AbstractSchema = any, Value = boolean> extends AbstractSchema<Schema, Value> {
   schemaType: 'boolean'
 
   /**
@@ -497,7 +497,7 @@ export interface BooleanSchemaType<Schema extends AbstractSchema = any, Value = 
 
 export interface BinarySchema<Value = Buffer> extends OptionalSchema, BinarySchemaType<BinarySchema, Value> {}
 export interface RequiredBinarySchema<Value = Buffer> extends RequiredSchema, BinarySchemaType<RequiredBinarySchema, Value> {}
-export interface BinarySchemaType<Schema extends AbstractSchema = any, Value = Buffer> extends AbstractSchema<Schema, Value> {
+interface BinarySchemaType<Schema extends AbstractSchema = any, Value = Buffer> extends AbstractSchema<Schema, Value> {
   schemaType: 'binary'
 
   /**
@@ -525,7 +525,7 @@ export interface BinarySchemaType<Schema extends AbstractSchema = any, Value = B
 
 export interface DateSchema<Value = Date> extends OptionalSchema, DateSchemaType<DateSchema, Value> {}
 export interface RequiredDateSchema<Value = Date> extends RequiredSchema, DateSchemaType<RequiredDateSchema, Value> {}
-export interface DateSchemaType<Schema extends AbstractSchema = any, Value = Date> extends AbstractSchema<Schema, Value> {
+interface DateSchemaType<Schema extends AbstractSchema = any, Value = Date> extends AbstractSchema<Schema, Value> {
   schemaType: 'date'
 
   /**
@@ -582,7 +582,7 @@ export interface DateSchemaType<Schema extends AbstractSchema = any, Value = Dat
 
 export interface FunctionSchema<Value = never> extends OptionalSchema, FunctionSchemaType<FunctionSchema, Value> {}
 export interface RequiredFunctionSchema<Value = never> extends RequiredSchema, FunctionSchemaType<RequiredFunctionSchema, Value> {}
-export interface FunctionSchemaType<Schema extends AbstractSchema = any, Value = never> extends AbstractSchema<Schema, Value> {
+interface FunctionSchemaType<Schema extends AbstractSchema = any, Value = never> extends AbstractSchema<Schema, Value> {
   schemaType: 'function'
 
   /**
@@ -613,7 +613,7 @@ export interface FunctionSchemaType<Schema extends AbstractSchema = any, Value =
 
 export interface NumberSchema<Value = number> extends OptionalSchema, NumberSchemaType<NumberSchema, Value> {}
 export interface RequiredNumberSchema<Value = number> extends RequiredSchema, NumberSchemaType<RequiredNumberSchema, Value> {}
-export interface NumberSchemaType<Schema extends AbstractSchema = any, Value = number> extends AbstractSchema<Schema, Value> {
+interface NumberSchemaType<Schema extends AbstractSchema = any, Value = number> extends AbstractSchema<Schema, Value> {
   schemaType: 'number'
 
   /**
@@ -677,7 +677,7 @@ export interface NumberSchemaType<Schema extends AbstractSchema = any, Value = n
 // WARNING: narrow-then-expand
 export interface ObjectSchema<Value = {}> extends OptionalSchema, ObjectSchemaType<ObjectSchema, Value> {}
 export interface RequiredObjectSchema<Value = {}> extends RequiredSchema, ObjectSchemaType<RequiredObjectSchema, Value> {}
-export interface ObjectSchemaType<Schema extends AbstractSchema = any, Value = {}> extends AbstractSchema<Schema, Value> {
+interface ObjectSchemaType<Schema extends AbstractSchema = any, Value = {}> extends AbstractSchema<Schema, Value> {
   schemaType: 'object'
 
   /**
@@ -817,7 +817,7 @@ export interface ObjectSchemaType<Schema extends AbstractSchema = any, Value = {
 
 export interface StringSchema<Value = string> extends OptionalSchema, StringSchemaType<StringSchema, Value> {}
 export interface RequiredStringSchema<Value = string> extends RequiredSchema, StringSchemaType<RequiredStringSchema, Value> {}
-export interface StringSchemaType<Schema extends AbstractSchema = any, Value = string> extends AbstractSchema<Schema, Value> {
+interface StringSchemaType<Schema extends AbstractSchema = any, Value = string> extends AbstractSchema<Schema, Value> {
   schemaType: 'string'
 
   /**
@@ -971,7 +971,7 @@ export interface WhenIs<Then extends SchemaLike = never, Otherwise extends Schem
 
 export interface AlternativesSchema<Value = never> extends OptionalSchema, AlternativesSchemaType<AlternativesSchema, Value> {}
 export interface RequiredAlternativesSchema<Value = never> extends RequiredSchema, AlternativesSchemaType<RequiredAlternativesSchema, Value> {}
-export interface AlternativesSchemaType<Schema extends AbstractSchema = any, Value = never> extends AbstractSchema<Schema, Value> {
+interface AlternativesSchemaType<Schema extends AbstractSchema = any, Value = never> extends AbstractSchema<Schema, Value> {
   schemaType: 'alternatives'
 
   try<T extends SchemaLike[]> (...types: T): AlternativesSchema<Value | SchemaValues<T>>
@@ -981,7 +981,7 @@ export interface AlternativesSchemaType<Schema extends AbstractSchema = any, Val
 
 export interface SymbolSchema<Value = symbol> extends OptionalSchema, SymbolSchemaType<SymbolSchema, Value> {}
 export interface RequiredSymbolSchema<Value = symbol> extends RequiredSchema, SymbolSchemaType<RequiredSymbolSchema, Value> {}
-export interface SymbolSchemaType<Schema extends AbstractSchema = any, Value = symbol> extends AbstractSchema<Schema, Value> {
+interface SymbolSchemaType<Schema extends AbstractSchema = any, Value = symbol> extends AbstractSchema<Schema, Value> {
   schemaType: 'symbol'
 
   map (iterable: Iterable<[string | number | boolean | symbol, symbol]> | { [key: string]: symbol }): this
@@ -991,7 +991,7 @@ export interface SymbolSchemaType<Schema extends AbstractSchema = any, Value = s
 
 export interface LazySchema<Value = never> extends OptionalSchema, LazySchemaType<LazySchema, Value> {}
 export interface RequiredLazySchema<Value = never> extends RequiredSchema, LazySchemaType<RequiredLazySchema, Value> {}
-export interface LazySchemaType<Schema extends AbstractSchema = any, Value = never> extends AbstractSchema<Schema, Value> {
+interface LazySchemaType<Schema extends AbstractSchema = any, Value = never> extends AbstractSchema<Schema, Value> {
   schemaType: 'lazy'
 }
 
