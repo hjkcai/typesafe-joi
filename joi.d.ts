@@ -1420,7 +1420,7 @@ export function reach (schema: ObjectSchema, path: string | string[]): Schema
  */
 export function extend (extension: Extension | Extension[], ...extensions: Array<Extension | Extension[]>): any
 
-import * as Module from 'joi'
+import * as Module from 'typesafe-joi'
 export type Root = typeof Module
 export type DefaultsFunction = (root: Schema) => Schema
 
