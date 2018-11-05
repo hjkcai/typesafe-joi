@@ -48,12 +48,13 @@ joi is so powerful that TypeScript cannot describe all its APIs statically. Here
 
 **TL;DR**:
 
+* `Joi.any()` starts with type `undefined`. You *must* call `.allow` or `.valid` on it to get a proper type. If you want `any`, call `Joi.any().allow<any>()`.
 * `Joi.array()` starts with type `never[]`. You *must* call `.items` on it to get a proper type. If you want `any[]`, call `Joi.array().items(Joi.any())`.
 * `Joi.object()` starts with type `{}` (the object type without any keys). You *must* call `.keys` on it, or pass arguments to it, to get a proper type. If you do not care about the content of the object, call `Joi.object<any>()`.
 
 ---
 
-Some of APIs of joi (`Joi.array`  and `Joi.object`) are designed to match all cases and shrinks in later schema definitions. However, these cases can be expanded *again*! For example:
+Some of APIs of joi (`Joi.any`, `Joi.array`  and `Joi.object`) are designed to match all cases and shrinks in later schema definitions. However, these cases can be expanded *again*! For example:
 
 ```javascript
 const a = Joi.object()  // matches `object`
@@ -67,7 +68,7 @@ const f = e.items(Joi.number())  // matches `(string | number)[]`
 
 As you can see, `a` matches any `object` type at the beginning. After invoking `.keys`, the types it matches shrank to `{ foo?: string }`. Then if I call `.append` (or `.keys` since they are almost the same) again, the types it matches expanded to `{ foo?: string, bar?: number }`.
 
-The problem is, as far as I have found, **shrinking types in TypeScript cannot be easily achieved**. It is able to shrink from `{ foo?: string, bar?: number }` to `{ foo?: string }` by omitting the key `bar`. But it is not possible to shrink from `any` to any other types, because there is no way to know if a type is `any` or not. Conditional type expression `T extends any` and `any extends T` are always true. 
+The problem is, as far as I have found, **shrinking types in TypeScript cannot be easily achieved**. It is able to shrink from `{ foo?: string, bar?: number }` to `{ foo?: string }` by omitting the key `bar`. But it is not possible to shrink from `any` to any other types, because there is no way to know if a type is `any` or not. Conditional type expression `T extends any` and `any extends T` are always true.
 
 Because of this limitation, I have to choose to only expand the types. The initial type will be the least expressive type of an array or an object, which is `never[]` on arrays and `{}` on objects. Then `.items` and `.keys` augment the type:
 
