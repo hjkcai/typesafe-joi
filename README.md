@@ -12,7 +12,7 @@ Import and use joi from `typesafe-joi`:
 import * as Joi from 'typesafe-joi'
 ```
 
-The TypeScript magic is shown when you call `.validate`:
+The TypeScript magic is shown when you call `.validate` or `.attempt`:
 
 ```typescript
 const data: any = dataFromAnywhere
@@ -21,7 +21,7 @@ const data: any = dataFromAnywhere
 Joi.object({ foo: Joi.string() }).validate(data).value
 
 // { id: number, email?: string }[]
-Joi.validate(
+Joi.attempt(
   data,
   Joi.array()
     .items(Joi.object({
