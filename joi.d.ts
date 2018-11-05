@@ -129,10 +129,10 @@ type OptionalSchemaType<Schema extends AbstractSchema, Value> = (
  * @example SchemaValue<{ a: StringSchema<A> }> = { a?: A } | undefined
  */
 export type SchemaValue<Schema extends SchemaLike> = (
-  Schema extends AbstractSchema<any, infer U>
+  Schema extends AbstractSchema
     ? Schema extends RequiredSchema
-      ? U
-      : U | undefined                           // Non-required types will be unioned with a `undefined` type
+      ? Schema[typeof VALUE]
+      : Schema[typeof VALUE] | undefined        // Non-required types will be unioned with a `undefined` type
 
     : Schema extends SchemaMap                  // Literal schemas will always be optional
       ? SchemaMapValue<Schema> | undefined
@@ -163,7 +163,16 @@ type SchemaValues<Schemas extends SchemaLike[]> = SchemaValue<Schemas[number]>
 
 // Common schema methods ------------------------------------------------------
 
-/** This is not a real joi schema property but is required for TypeScript to work */
+/**
+ * DO NOT USE!
+ * This is not a real joi schema property but is required for TypeScript to work
+ */
+declare const VALUE: unique symbol
+
+/**
+ * DO NOT USE!
+ * This is not a real joi schema property but is required for TypeScript to work
+ */
 declare const IS_REQUIRED: unique symbol
 
 interface RequiredSchema {
@@ -176,11 +185,12 @@ interface OptionalSchema {
 
 interface AbstractSchema<Schema extends AbstractSchema = any, Value = any> extends JoiObject {
   schemaType: string
+  [VALUE]: Value
 
   /** Validates a value using the schema and options. */
-  validate (value: any, options?: ValidationOptions): ValidationResult<Value | MaybeUndefined<Schema>>
-  validate (value: any, callback: (err: ValidationError, value: Value | MaybeUndefined<Schema>) => void): void
-  validate (value: any, options: ValidationOptions, callback: (err: ValidationError, value: Value | MaybeUndefined<Schema>) => void): void
+  validate (value: any, options?: ValidationOptions): ValidationResult<Value>
+  validate (value: any, callback: (err: ValidationError, value: Value) => void): void
+  validate (value: any, options: ValidationOptions, callback: (err: ValidationError, value: Value) => void): void
 
   /** Whitelists a value */
   allow<T extends AnyType[]> (values: T): SchemaType<Schema, Value | T[number]>
@@ -343,7 +353,10 @@ interface AnySchemaType<Schema extends AbstractSchema = any, Value = any> extend
 
 // ArraySchema ----------------------------------------------------------------
 
-/** This is not a real joi schema property but is required for TypeScript to work */
+/**
+ * DO NOT USE!
+ * This is not a real joi schema property but is required for TypeScript to work
+ */
 declare const IS_SPARSE: unique symbol
 
 interface SparseSchema {
@@ -1277,12 +1290,6 @@ type AnyType = string | number | boolean | symbol | object | null | undefined
 type ConstructorOf<T> = new (...args: any[]) => T
 type ExcludeUndefined<T> = Exclude<T, undefined>
 type ArrayItemType<T> = T extends (infer U)[] ? U : never
-
-type MaybeUndefined<T extends AbstractSchema> = (
-  T extends RequiredSchema
-  ? never
-  : undefined
-)
 
 /** Find keys that its value extends `U` of an object */
 type FilterKeys<T extends object, U> = { [key in keyof T]: T[key] extends U ? key : never }[keyof T]
