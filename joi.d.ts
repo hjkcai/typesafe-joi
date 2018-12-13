@@ -183,7 +183,7 @@ interface OptionalSchema {
   [IS_REQUIRED]: false
 }
 
-interface AbstractSchema<Schema extends AbstractSchema = any, Value = any> extends JoiObject {
+interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, Value = any> extends JoiObject {
   schemaType: string
   [VALUE]: Value
 
