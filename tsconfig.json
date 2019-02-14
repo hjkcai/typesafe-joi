@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
-    "strict": true
+    "baseUrl": ".",
+    "strict": true,
+    "paths": {
+      "typesafe-joi": ["./joi"]
+    }
   }
 }

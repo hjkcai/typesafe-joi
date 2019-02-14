@@ -7,9 +7,16 @@
   "repository": "https://github.com/hjkcai/typesafe-joi.git",
   "author": "Jingkun Hua<huajingkun1214@gmail.com>",
   "license": "MIT",
-  "keywords": ["joi", "typescript", "validation"],
+  "keywords": [
+    "joi",
+    "typescript",
+    "validation"
+  ],
+  "dependencies": {
+    "@types/node": "*"
+  },
   "peerDependencies": {
-    "joi": "^14.0.0",
+    "joi": "^14.3.0",
     "typescript": ">=3.0.0"
   }
 }

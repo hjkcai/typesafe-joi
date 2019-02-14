@@ -2,6 +2,8 @@
 // Project: https://github.com/hapijs/joi
 // Definitions by: Jingkun Hua <https://github.com/hjkcai>
 // TypeScript Version: 3.0
+/// <reference types="node" />
+/// <reference lib="es2015" />
 
 // ----------------------------------------------------------------------------
 // General schema definition
