@@ -2,9 +2,11 @@
 
 typesafe-joi is a fork of [joi](https://github.com/hapijs/joi). More precisely, this is a fork of [@types/joi](https://www.npmjs.com/package/@types/joi) because it has just redefined the essential APIs of joi. *Almost* all the APIs are the same as the original APIs, but limitations *exists*. That is why I create a new package, rather than submit a PR to @types/joi.
 
-## Usage
+typesafe-joi currently matches the API of joi 14.3.x. And it requires TypeScript >=3.0.0 to work.
 
-> IMPORTANT: typesafe-joi requires at least TypeScript 3 to work. Because some declarations are impossible without the TypeScript 3 tuple updates.
+Note: typesafe-joi is still WIP. Sorry but I do not have enough time to write a unit test for it. Please feel free to open an issue when you find bugs or suggestions. I am glad to help!
+
+## Usage
 
 Import and use joi from `typesafe-joi`:
 
@@ -117,6 +119,28 @@ TypeScript has no way to know your `presence` setting statically. I have to choo
 
 The implementation of the `presence` is really tricky, especially the implementation of optional object key. So far the type parameter of `ObjectSchema` will be very messy. See `SchemaMapValue` if you are interested in the reason.
 
-## Help me improve
+### Handling duplicate object key
 
-Sorry but I do not have enough time to write a unit test for it. Please feel free to open an issue when you find bugs or suggestions. I am glad to help!
+**TL;DR**: Do *not* define duplicate keys in any cases!
+
+---
+
+Defining duplicate keys results in intersection object type. You cannot get the correct result.
+
+The `pattern` function of `ObjectSchema` can cause this problem too. `pattern` creates index signature. If `pattern` is called multiple times, index signatures will merge with each other and become weird.
+
+If your application depends on this feature, define the object type *manually*.
+
+```typescript
+// Returns { a: number & string }
+// Actually validates against { a: string }
+Joi.object()
+  .keys({ a: Joi.number().required() })
+  .keys({ a: Joi.string().required() })
+
+// Returns { [key: string]: number & string }
+// Actually it is impossible to define an object like this in TypeScript
+Joi.object()
+  .pattern(/[0-9]/, Joi.number().required())
+  .pattern(/[a-z]/, Joi.string().required())
+```
