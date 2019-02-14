@@ -695,6 +695,11 @@ interface NumberSchemaType<Schema extends AbstractSchema, Value> extends Abstrac
    * Requires the number to be a TCP port, so between 0 and 65535.
    */
   port (): this
+
+  /**
+   * Allows the number to be outside of JavaScript's safety range (Number.MIN_SAFE_INTEGER & Number.MAX_SAFE_INTEGER).
+   */
+  unsafe (enabled: boolean): this;
 }
 
 // ObjectSchema ---------------------------------------------------------------
