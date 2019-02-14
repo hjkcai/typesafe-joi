@@ -154,14 +154,11 @@ export type SchemaValue<Schema extends SchemaLike> = (
  * @example SchemaMapValue<{ a: StringSchema, b: RequiredStringSchema }> = { a?: string, b: string }
  */
 type SchemaMapValue<
-  Map extends SchemaMap,
-  Value = (
-    SchemaMapLiteral<Filter<Map, RequiredSchema>>
-    & Partial<SchemaMapLiteral<FilterOut<Map, RequiredSchema>>>
-  )
-> = {
-  [Key in keyof Value]: Value[Key]
-}
+  Map extends SchemaMap
+> = (
+  { [key in keyof SchemaMapLiteral<Filter<Map, RequiredSchema>>]: SchemaMapLiteral<Filter<Map, RequiredSchema>>[key] }
+  & { [key in keyof SchemaMapLiteral<FilterOut<Map, RequiredSchema>>]?: SchemaMapLiteral<FilterOut<Map, RequiredSchema>>[key] }
+)
 
 /** Convert every entry in a `SchemaMap` into literal */
 type SchemaMapLiteral<Map /* extends SchemaMap */> = {     // `Map` cannot extends `SchemaMap` because `Filter` type does not return `SchemaMap`
