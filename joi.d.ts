@@ -238,14 +238,6 @@ interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, Value = 
   forbidden (): SchemaType<Schema, never>
 
   /**
-   * By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because
-   * they use `this` internally.
-   * So `Joi.string()` works but if you extract the function from it and call `string()` it won't.
-   * `bind()` creates a new Joi instance where all the functions relying on `this` are bound to the Joi instance.
-   */
-  bind(): this;
-
-  /**
    * Marks a key to be removed from a resulting object or array after validation. Used to sanitize output.
    */
   strip (): this
