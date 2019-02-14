@@ -46,6 +46,9 @@ export type Schema<Value = any> = (
   | RequiredLazySchema<Value>
 )
 
+/** All possible schemas */
+export type SchemaInstance<Value = any> = Schema<Value>
+
 /**
  * Assemble `Schema` and `Value` into `Schema<Value>`
  * @description This is useful in the interface `SchemaMethods` (but a little bit tedious)
@@ -231,6 +234,14 @@ interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, Value = 
   forbidden (): SchemaType<Schema, never>
 
   /**
+   * By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because
+   * they use `this` internally.
+   * So `Joi.string()` works but if you extract the function from it and call `string()` it won't.
+   * `bind()` creates a new Joi instance where all the functions relying on `this` are bound to the Joi instance.
+   */
+  bind(): this;
+
+  /**
    * Marks a key to be removed from a resulting object or array after validation. Used to sanitize output.
    */
   strip (): this
@@ -340,7 +351,7 @@ interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, Value = 
    * override, that error will be returned and the override will be ignored (unless the `abortEarly`
    * option has been set to `false`).
    */
-  error (err: Error | ValidationErrorFunction): this
+  error (err: Error | ValidationErrorFunction, options?: ErrorOptions): this
 
   /**
    * Returns a plain object representing the schema's rules and properties
@@ -730,6 +741,11 @@ interface ObjectSchemaType<Schema extends AbstractSchema, Value> extends Abstrac
   type<T extends ConstructorOf<any>> (constructor: T, name?: string): SchemaType<Schema, MergeObject<Value, InstanceType<T>>>
 
   /**
+   * Requires the object to be a Joi schema instance.
+   */
+  schema (): SchemaType<Schema, SchemaInstance>
+
+  /**
    * Specifies the minimum number of keys in the object.
    */
   min (limit: number): this
@@ -773,6 +789,13 @@ interface ObjectSchemaType<Schema extends AbstractSchema, Value> extends Abstrac
    */
   or (...peers: string[]): this
   or (peers: string[]): this
+
+  /**
+   * Defines an exclusive relationship between a set of keys where only one is allowed but none are required where:
+   * `peers` - the exclusive key names that must not appear together but where none are required.
+   */
+  oxor(...peers: string[]): this;
+  oxor(peers: string[]): this;
 
   /**
    * Defines an exclusive relationship between a set of keys. one of them is required but not at the same time where:
@@ -1114,11 +1137,22 @@ export interface EmailOptions {
   minDomainAtoms?: number
 }
 
+export interface ErrorOptions {
+  /**
+   * Boolean value indicating whether the error handler should be used for all errors or only for errors occurring
+   * on this property (`true` value).
+   * This concept only makes sense for `array` or `object` schemas as other values don't have children.
+   * @default false
+   */
+  self?: boolean;
+}
+
 export interface HexOptions {
   /**
    * hex decoded representation must be byte aligned
+   * @default false
    */
-  byteAligned: boolean
+  byteAligned?: boolean
 }
 
 export interface IpOptions {
@@ -1191,7 +1225,7 @@ export interface JoiObject {
   isJoi: boolean
 }
 
-export interface ValidationResult<T> extends PromiseLike<T> {
+export interface ValidationResult<T> extends Pick<Promise<T>, 'then' | 'catch'> {
   error: ValidationError
   value: T
 }
