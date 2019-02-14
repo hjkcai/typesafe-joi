@@ -1443,3 +1443,11 @@ export type DefaultsFunction = (root: Schema) => Schema
  * @param fn - The function must always return a schema, even if untransformed.
  */
 export function defaults (fn: DefaultsFunction): Root
+
+/**
+ * By default, some Joi methods to function properly need to rely on the Joi instance they are attached to
+ * because they use `this` internally. So `Joi.string()` works but if you extract the function from it
+ * and call `string()` it won't. `bind()` creates a new Joi instance
+ * where all the functions relying on `this` are bound to the Joi instance.
+ */
+export function bind (): Root
