@@ -1,3 +1,7 @@
+// Type definitions for joi 14.3
+// Project: https://github.com/hapijs/joi
+// Definitions by: Jingkun Hua <https://github.com/hjkcai>
+// TypeScript Version: 3.0
 
 // ----------------------------------------------------------------------------
 // General schema definition
