@@ -144,10 +144,15 @@ export type SchemaValue<Schema extends SchemaLike> = (
  * @description If a key is not `RequiredXXXSchema`, it will be marked as optional.
  * @example SchemaMapValue<{ a: StringSchema, b: RequiredStringSchema }> = { a?: string, b: string }
  */
-type SchemaMapValue<Map extends SchemaMap> = (
-  SchemaMapLiteral<Filter<Map, RequiredSchema>>
-  & Partial<SchemaMapLiteral<FilterOut<Map, RequiredSchema>>>
-)
+type SchemaMapValue<
+  Map extends SchemaMap,
+  Value = (
+    SchemaMapLiteral<Filter<Map, RequiredSchema>>
+    & Partial<SchemaMapLiteral<FilterOut<Map, RequiredSchema>>>
+  )
+> = {
+  [Key in keyof Value]: Value[Key]
+}
 
 /** Convert every entry in a `SchemaMap` into literal */
 type SchemaMapLiteral<Map /* extends SchemaMap */> = {     // `Map` cannot extends `SchemaMap` because `Filter` type does not return `SchemaMap`
