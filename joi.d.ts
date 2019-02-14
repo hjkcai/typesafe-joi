@@ -761,7 +761,7 @@ interface ObjectSchemaType<Schema extends AbstractSchema, Value> extends Abstrac
    * @param pattern - a pattern that can be either a regular expression or a joi schema that will be tested against the unknown key names
    * @param schema - the schema object matching keys must validate against
    */
-  pattern (pattern: RegExp | SchemaLike, schema: SchemaLike): this
+  pattern<T extends SchemaLike> (pattern: RegExp | SchemaLike, schema: T): SchemaType<Schema, MergeObject<Value, Record<string, SchemaValue<T>>>>
 
   /**
    * Defines an all-or-nothing relationship between keys where if one of the peers is present, all of them are required as well.
