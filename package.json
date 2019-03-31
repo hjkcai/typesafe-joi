@@ -1,9 +1,9 @@
 {
   "name": "typesafe-joi",
   "description": "A fork of joi that produces typed validation results in TypeScript",
-  "version": "1.0.0-beta5",
-  "main": "joi.js",
-  "types": "joi.d.ts",
+  "version": "1.0.0",
+  "types": "dist/index.d.js",
+  "main": "typesafe-joi.js",
   "repository": "https://github.com/hjkcai/typesafe-joi.git",
   "author": "Jingkun Hua<huajingkun1214@gmail.com>",
   "license": "MIT",
@@ -13,10 +13,11 @@
     "validation"
   ],
   "dependencies": {
+    "@types/joi": "~14.3.0",
     "@types/node": "*"
   },
   "peerDependencies": {
-    "joi": "^14.3.0",
+    "joi": "~14.3.0",
     "typescript": ">=3.0.0"
   }
 }
