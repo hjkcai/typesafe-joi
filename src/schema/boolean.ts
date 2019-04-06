@@ -1,11 +1,14 @@
 import { OptionalSchema, RequiredSchema } from ".";
 import { AbstractSchema } from "./base";
+import { REQUIRED_SCHEMA_TYPE, OPTIONAL_SCHEMA_TYPE } from "../lib/symbols";
 
 export interface BooleanSchema<Value = boolean | undefined> extends OptionalSchema, BooleanSchemaType<BooleanSchema, Value> {}
 export interface RequiredBooleanSchema<Value = boolean> extends RequiredSchema, BooleanSchemaType<RequiredBooleanSchema, Value> {}
 
 export interface BooleanSchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
   schemaType: 'boolean'
+  [OPTIONAL_SCHEMA_TYPE]: BooleanSchema
+  [REQUIRED_SCHEMA_TYPE]: RequiredBooleanSchema
 
   /**
    * Allows for additional values to be considered valid booleans by converting them to true during validation.

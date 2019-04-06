@@ -1,12 +1,15 @@
 import { OptionalSchema, RequiredSchema } from ".";
 import { AbstractSchema } from "./base";
 import { Reference } from "../lib/joi";
+import { OPTIONAL_SCHEMA_TYPE, REQUIRED_SCHEMA_TYPE } from "../lib/symbols";
 
 export interface DateSchema<Value = Date | undefined> extends OptionalSchema, DateSchemaType<DateSchema, Value> {}
 export interface RequiredDateSchema<Value = Date> extends RequiredSchema, DateSchemaType<RequiredDateSchema, Value> {}
 
 export interface DateSchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
   schemaType: 'date'
+  [OPTIONAL_SCHEMA_TYPE]: DateSchema
+  [REQUIRED_SCHEMA_TYPE]: RequiredDateSchema
 
   /**
    * Specifies that the value must be greater than date.

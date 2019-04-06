@@ -1,12 +1,14 @@
-import { JoiObject, ValidationOptions, ValidationResult, ValidationError, Reference, ValidationErrorFunction, ErrorOptions, Description } from "../lib/joi";
-import { VALUE } from "../lib/symbols";
+import { JoiObject, ValidationOptions, ValidationResult, ValidationError, Reference, ValidationErrorFunction, ErrorOptions, Description, When, WhenIs } from "../lib/joi";
+import { VALUE, REQUIRED_SCHEMA_TYPE, OPTIONAL_SCHEMA_TYPE } from "../lib/symbols";
 import { AnyType, ExcludeUndefined } from "../lib/util";
-import { SchemaType, SchemaValue, RequiredSchemaType, OptionalSchemaType, SchemaLike } from ".";
-import { WhenIs, AlternativesSchema, When } from "./alternative";
+import { SchemaType, SchemaValue, SchemaLike } from ".";
+import { AlternativesSchema } from "./alternative";
 
 export interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, Value = any> extends JoiObject {
   schemaType: string
   [VALUE]: Value
+  [REQUIRED_SCHEMA_TYPE]: unknown
+  [OPTIONAL_SCHEMA_TYPE]: unknown
 
   /** Validates a value using the schema and options. */
   validate (value: any, options?: ValidationOptions): ValidationResult<Value>
@@ -37,11 +39,11 @@ export interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, V
   concat<T extends AbstractSchema> (schema: T): SchemaType<Schema, Value | SchemaValue<T>>
 
   /** Marks a key as required which will not allow undefined as value. All keys are optional by default. */
-  required (): RequiredSchemaType<Schema, ExcludeUndefined<Value>>
-  exist (): RequiredSchemaType<Schema, ExcludeUndefined<Value>>
+  required (): SchemaType<Schema[typeof REQUIRED_SCHEMA_TYPE], ExcludeUndefined<Value>>
+  exist (): SchemaType<Schema[typeof REQUIRED_SCHEMA_TYPE], ExcludeUndefined<Value>>
 
   /** Marks a key as optional which will allow undefined as values. Used to annotate the schema for readability as all keys are optional by default. */
-  optional (): OptionalSchemaType<Schema, Value | undefined>
+  optional (): SchemaType<Schema[typeof OPTIONAL_SCHEMA_TYPE], Value | undefined>
 
   /** Marks a key as forbidden which will not allow any value except undefined. Used to explicitly forbid keys. */
   forbidden (): SchemaType<Schema, never>

@@ -64,7 +64,7 @@ export type SchemaInstance<Value = any> = Schema<Value>
  * Assemble `Schema` and `Value` into `Schema<Value>`
  * @description This is useful in the interface `SchemaMethods` (but a little bit tedious)
  */
-export type SchemaType<Schema extends AbstractSchema, Value> = (
+export type SchemaType<Schema, Value> = (
     Schema extends AnySchema ? AnySchema<Value>
   : Schema extends ArraySchema ? ArraySchema<Value>
   : Schema extends SparseArraySchema ? SparseArraySchema<Value>
@@ -93,42 +93,6 @@ export type SchemaType<Schema extends AbstractSchema, Value> = (
   : Schema extends RequiredAlternativesSchema ? RequiredAlternativesSchema<Value>
   : Schema extends RequiredLazySchema ? RequiredLazySchema<Value>
   : never
-)
-
-/** Change `Schema` to `RequiredSchema` */
-export type RequiredSchemaType<Schema extends AbstractSchema, Value> = (
-    Schema extends AnySchema ? RequiredAnySchema<Value>
-  : Schema extends ArraySchema ? RequiredArraySchema<Value>
-  : Schema extends SparseArraySchema ? RequiredSparseArraySchema<Value>
-  : Schema extends BooleanSchema ? RequiredBooleanSchema<Value>
-  : Schema extends BinarySchema ? RequiredBinarySchema<Value>
-  : Schema extends DateSchema ? RequiredDateSchema<Value>
-  : Schema extends FunctionSchema ? RequiredFunctionSchema<Value>
-  : Schema extends NumberSchema ? RequiredNumberSchema<Value>
-  : Schema extends ObjectSchema ? RequiredObjectSchema<Value>
-  : Schema extends StringSchema ? RequiredStringSchema<Value>
-  : Schema extends SymbolSchema ? RequiredSymbolSchema<Value>
-  : Schema extends AlternativesSchema ? RequiredAlternativesSchema<Value>
-  : Schema extends LazySchema ? RequiredLazySchema<Value>
-  : Schema
-)
-
-/** Change `RequiredSchema` to `Schema` */
-export type OptionalSchemaType<Schema extends AbstractSchema, Value> = (
-    Schema extends RequiredAnySchema ? AnySchema<Value>
-  : Schema extends RequiredArraySchema ? ArraySchema<Value>
-  : Schema extends RequiredSparseArraySchema ? SparseArraySchema<Value>
-  : Schema extends RequiredBooleanSchema ? BooleanSchema<Value>
-  : Schema extends RequiredBinarySchema ? BinarySchema<Value>
-  : Schema extends RequiredDateSchema ? DateSchema<Value>
-  : Schema extends RequiredFunctionSchema ? FunctionSchema<Value>
-  : Schema extends RequiredNumberSchema ? NumberSchema<Value>
-  : Schema extends RequiredObjectSchema ? ObjectSchema<Value>
-  : Schema extends RequiredStringSchema ? StringSchema<Value>
-  : Schema extends RequiredSymbolSchema ? SymbolSchema<Value>
-  : Schema extends RequiredAlternativesSchema ? AlternativesSchema<Value>
-  : Schema extends RequiredLazySchema ? LazySchema<Value>
-  : Schema
 )
 
 /**

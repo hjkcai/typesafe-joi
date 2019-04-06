@@ -1,11 +1,14 @@
 import { OptionalSchema, RequiredSchema } from ".";
 import { AbstractSchema } from "./base";
+import { OPTIONAL_SCHEMA_TYPE, REQUIRED_SCHEMA_TYPE } from "../lib/symbols";
 
 export interface BinarySchema<Value = Buffer | undefined> extends OptionalSchema, BinarySchemaType<BinarySchema, Value> {}
 export interface RequiredBinarySchema<Value = Buffer> extends RequiredSchema, BinarySchemaType<RequiredBinarySchema, Value> {}
 
 export interface BinarySchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
   schemaType: 'binary'
+  [OPTIONAL_SCHEMA_TYPE]: BinarySchema
+  [REQUIRED_SCHEMA_TYPE]: RequiredBinarySchema
 
   /**
    * Sets the string encoding format if a string input is converted to a buffer.

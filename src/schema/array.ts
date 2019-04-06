@@ -1,4 +1,4 @@
-import { IS_SPARSE } from "../lib/symbols";
+import { IS_SPARSE, OPTIONAL_SCHEMA_TYPE, REQUIRED_SCHEMA_TYPE } from "../lib/symbols";
 import { OptionalSchema, RequiredSchema, SchemaLike, SchemaType, SchemaValues } from ".";
 import { AbstractSchema } from "./base";
 import { Reference } from "../lib/joi";
@@ -59,6 +59,9 @@ export interface BaseArraySchemaType<Schema extends AbstractSchema, Value> exten
 }
 
 export interface ArraySchemaType<Schema extends AbstractSchema, Value> extends BaseArraySchemaType<Schema, Value> {
+  [OPTIONAL_SCHEMA_TYPE]: ArraySchema
+  [REQUIRED_SCHEMA_TYPE]: RequiredArraySchema
+
   /**
    * List the types allowed for the array values.
    * type can be an array of values, or multiple values can be passed as individual arguments.
@@ -95,6 +98,9 @@ export interface ArraySchemaType<Schema extends AbstractSchema, Value> extends B
 }
 
 export interface SparseArraySchemaType<Schema extends AbstractSchema, Value> extends BaseArraySchemaType<Schema, Value> {
+  [OPTIONAL_SCHEMA_TYPE]: SparseArraySchema
+  [REQUIRED_SCHEMA_TYPE]: RequiredSparseArraySchema
+
   /**
    * List the types allowed for the array values.
    * type can be an array of values, or multiple values can be passed as individual arguments.

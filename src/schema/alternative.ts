@@ -1,20 +1,14 @@
 import { SchemaLike, OptionalSchema, RequiredSchema, SchemaValues } from ".";
 import { AbstractSchema } from "./base";
-
-export interface When<Then extends SchemaLike = never, Otherwise extends SchemaLike = never> {
-  then?: Then,
-  otherwise?: Otherwise
-}
-
-export interface WhenIs<Then extends SchemaLike = never, Otherwise extends SchemaLike = never> extends When<Then, Otherwise> {
-  is: SchemaLike
-}
+import { OPTIONAL_SCHEMA_TYPE, REQUIRED_SCHEMA_TYPE } from "../lib/symbols";
 
 export interface AlternativesSchema<Value = undefined> extends OptionalSchema, AlternativesSchemaType<AlternativesSchema, Value> {}
 export interface RequiredAlternativesSchema<Value = never> extends RequiredSchema, AlternativesSchemaType<RequiredAlternativesSchema, Value> {}
 
 export interface AlternativesSchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
   schemaType: 'alternatives'
+  [OPTIONAL_SCHEMA_TYPE]: AlternativesSchema
+  [REQUIRED_SCHEMA_TYPE]: RequiredAlternativesSchema
 
   try<T extends SchemaLike[]> (...types: T): AlternativesSchema<Value | SchemaValues<T>>
 }

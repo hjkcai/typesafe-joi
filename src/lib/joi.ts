@@ -51,3 +51,12 @@ export interface Rules<P extends object = any> {
   validate? (this: ExtensionBoundSchema, params: P, value: any, state: Joi.State, options: Joi.ValidationOptions): any
   description?: string | ((params: P) => string)
 }
+
+export interface When<Then extends SchemaLike = never, Otherwise extends SchemaLike = never> {
+  then?: Then,
+  otherwise?: Otherwise
+}
+
+export interface WhenIs<Then extends SchemaLike = never, Otherwise extends SchemaLike = never> extends When<Then, Otherwise> {
+  is: SchemaLike
+}

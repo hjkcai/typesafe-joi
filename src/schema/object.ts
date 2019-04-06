@@ -2,12 +2,15 @@ import { OptionalSchema, RequiredSchema, SchemaType, SchemaMap, SchemaMapValue, 
 import { AbstractSchema } from "./base";
 import { MergeObject, ConstructorOf } from "../lib/util";
 import { RenameOptions, Reference } from "../lib/joi";
+import { OPTIONAL_SCHEMA_TYPE, REQUIRED_SCHEMA_TYPE } from "../lib/symbols";
 
 export interface ObjectSchema<Value = {} | undefined> extends OptionalSchema, ObjectSchemaType<ObjectSchema, Value> {}
 export interface RequiredObjectSchema<Value = {}> extends RequiredSchema, ObjectSchemaType<RequiredObjectSchema, Value> {}
 
 export interface ObjectSchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
   schemaType: 'object'
+  [OPTIONAL_SCHEMA_TYPE]: ObjectSchema
+  [REQUIRED_SCHEMA_TYPE]: RequiredObjectSchema
 
   /**
    * Sets or extends the allowed object keys.

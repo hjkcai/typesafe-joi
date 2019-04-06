@@ -1,12 +1,15 @@
 import { OptionalSchema, RequiredSchema, SchemaType } from ".";
 import { AbstractSchema } from "./base";
 import { Reference } from "../lib/joi";
+import { OPTIONAL_SCHEMA_TYPE, REQUIRED_SCHEMA_TYPE } from "../lib/symbols";
 
 export interface FunctionSchema<Value = Function | undefined> extends OptionalSchema, FunctionSchemaType<FunctionSchema, Value> {}
 export interface RequiredFunctionSchema<Value = Function> extends RequiredSchema, FunctionSchemaType<RequiredFunctionSchema, Value> {}
 
 export interface FunctionSchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
   schemaType: 'function'
+  [OPTIONAL_SCHEMA_TYPE]: FunctionSchema
+  [REQUIRED_SCHEMA_TYPE]: RequiredFunctionSchema
 
   /**
    * Specifies the arity of the function where:
