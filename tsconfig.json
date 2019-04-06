@@ -1,9 +1,5 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
-    "declaration": true,
-    "emitDeclarationOnly": true,
-
     "lib": ["es2015"],
     "strict": true,
     "types": [

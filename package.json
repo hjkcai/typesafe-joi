@@ -15,7 +15,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "clean": "shx rm -r dist",
-    "prepublishOnly": "yarpm run clean && yarpm run build"
+    "test": "tsc -p . --noEmit",
+    "prepublishOnly": "npm-run-all -s test clean build"
   },
   "dependencies": {
     "@types/joi": "~14.3.0",
@@ -26,7 +27,8 @@
     "typescript": ">=3.0.0"
   },
   "devDependencies": {
+    "npm-run-all": "^4.1.5",
     "shx": "^0.3.2",
-    "yarpm": "^0.2.1"
+    "typescript": "^3.4.2"
   }
 }
