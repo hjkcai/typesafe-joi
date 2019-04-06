@@ -12,16 +12,16 @@ export interface NonSparseSchema {
   [IS_SPARSE]: false
 }
 
-export interface ArraySchema<Value = never[]>
+export interface ArraySchema<Value = never[] | undefined>
   extends OptionalSchema, NonSparseSchema, ArraySchemaType<ArraySchema, Value> {}
 
 export interface RequiredArraySchema<Value = never[]>
   extends RequiredSchema, NonSparseSchema, ArraySchemaType<RequiredArraySchema, Value> {}
 
-export interface SparseArraySchema<Value = never[]>
+export interface SparseArraySchema<Value = undefined[] | undefined>
   extends OptionalSchema, SparseSchema, SparseArraySchemaType<SparseArraySchema, Value> {}
 
-export interface RequiredSparseArraySchema<Value = never[]>
+export interface RequiredSparseArraySchema<Value = undefined[]>
   extends RequiredSchema, SparseSchema, SparseArraySchemaType<RequiredSparseArraySchema, Value> {}
 
 export interface BaseArraySchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
