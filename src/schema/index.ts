@@ -132,11 +132,13 @@ export type OptionalSchemaType<Schema extends AbstractSchema, Value> = (
 )
 
 /**
- * The literal type of a `SchemaLike`
- * @example SchemaValue<StringSchema<T>> = T | undefined
- * @example SchemaValue<RequiredStringSchema<T>> = T
- * @example SchemaValue<string | number | boolean | null> = string | number | boolean | null | undefined
- * @example SchemaValue<{ a: StringSchema<A> }> = { a?: A } | undefined
+ * Convert a `SchemaLike` into literal type.
+ *
+ * @example
+ * type A = SchemaValue<StringSchema<T>>; // T | undefined
+ * type B = SchemaValue<RequiredStringSchema<T>>; // T
+ * type C = SchemaValue<string | number | boolean | null>; // string | number | boolean | null | undefined
+ * type D = SchemaValue<{ a: StringSchema<T> }>; // { a?: T } | undefined
  */
 export type SchemaValue<Schema extends SchemaLike> = (
   Schema extends AbstractSchema
@@ -150,28 +152,36 @@ export type SchemaValue<Schema extends SchemaLike> = (
 )
 
 /**
- * Build the value type of a `SchemaMap`
- * @description If a key is not `RequiredXXXSchema`, it will be marked as optional.
+ * Convert a `SchemaMap` into literal type.
+ *
  * @example
- * type A = SchemaMapValue<{ a: StringSchema, b: RequiredStringSchema }> // { a?: string, b: string }
+ * type A = SchemaMapValue<{ a: StringSchema, b: RequiredStringSchema }> // { b: string } & { a?: string }
  */
 export type SchemaMapValue<Map extends SchemaMap> = (
   { [key in keyof SchemaMapLiteral<FilterValues<Map, RequiredSchema>>]: SchemaMapLiteral<FilterValues<Map, RequiredSchema>>[key] }
   & { [key in keyof SchemaMapLiteral<OmitValues<Map, RequiredSchema>>]?: SchemaMapLiteral<OmitValues<Map, RequiredSchema>>[key] }
 )
 
-/** Convert every entry in a `SchemaMap` into literal */
-export type SchemaMapLiteral<Map /* extends SchemaMap */> = {     // `Map` cannot extends `SchemaMap` because `Filter` type does not return `SchemaMap`
+/**
+ * Directly convert a `SchemaMap` into literal, reguardless if it is optional or required.
+ *
+ * @example
+ * type A = SchemaMapLiteral<{ a: StringSchema, b: RequiredStringSchema }> // { a: string | undefined, b: string }
+ */
+export type SchemaMapLiteral<Map extends SchemaMap> = {
   [key in keyof Map]: Map[key] extends SchemaLike ? SchemaValue<Map[key]> : never
 }
 
-/** Extract the value types of multiple `SchemaLike`s */
-export type SchemaValues<Schemas extends SchemaLike[]> = SchemaValue<Schemas[number]>
+/**
+ * Extract the value types of a `SchemaLike` tuple. Useful when defining ArraySchema and AlternativesSchema.
+ *
+ * @example
+ * type A = SchemaValues<[BooleanSchema, NumberSchema]> // boolean | number | undefined
+ */
+export type SchemaValues<SchemaTuple extends SchemaLike[]> = SchemaValue<SchemaTuple[number]>
 
-export interface RequiredSchema {
-  [IS_REQUIRED]: true
-}
+/** The nominal type to mark a schema as required. */
+export interface RequiredSchema { [IS_REQUIRED]: true }
 
-export interface OptionalSchema {
-  [IS_REQUIRED]: false
-}
+/** The nominal type to mark a schema as optional. */
+export interface OptionalSchema { [IS_REQUIRED]: false }
