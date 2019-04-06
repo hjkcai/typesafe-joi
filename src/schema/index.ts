@@ -11,8 +11,8 @@ import { StringSchema, RequiredStringSchema } from "./string";
 import { SymbolSchema, RequiredSymbolSchema } from "./symbol";
 import { AlternativesSchema, RequiredAlternativesSchema } from "./alternative";
 import { LazySchema, RequiredLazySchema } from "./lazy";
-import { VALUE, IS_REQUIRED } from "./symbols";
-import { Filter, FilterOut } from "./util";
+import { VALUE, IS_REQUIRED } from "../lib/symbols";
+import { Filter, FilterOut } from "../lib/util";
 
 /**
  * Joi normal schema and literal schema

@@ -1,4 +1,4 @@
-import { OptionalSchema, RequiredSchema } from "./schema";
+import { OptionalSchema, RequiredSchema } from ".";
 import { AbstractSchema } from "./base";
 
 export interface LazySchema<Value = undefined> extends OptionalSchema, LazySchemaType<LazySchema, Value> {}

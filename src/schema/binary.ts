@@ -1,4 +1,4 @@
-import { OptionalSchema, RequiredSchema } from "./schema";
+import { OptionalSchema, RequiredSchema } from ".";
 import { AbstractSchema } from "./base";
 
 export interface BinarySchema<Value = Buffer | undefined> extends OptionalSchema, BinarySchemaType<BinarySchema, Value> {}

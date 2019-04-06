@@ -1,6 +1,6 @@
 import * as Joi from 'joi'
-import { ObjectSchema } from './object';
-import { Schema, SchemaLike } from './schema';
+import { ObjectSchema } from '../schema/object';
+import { Schema, SchemaLike } from '../schema';
 
 export {
   LanguageOptions,

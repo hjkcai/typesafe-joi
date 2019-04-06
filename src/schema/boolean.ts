@@ -1,4 +1,4 @@
-import { OptionalSchema, RequiredSchema } from "./schema";
+import { OptionalSchema, RequiredSchema } from ".";
 import { AbstractSchema } from "./base";
 
 export interface BooleanSchema<Value = boolean | undefined> extends OptionalSchema, BooleanSchemaType<BooleanSchema, Value> {}

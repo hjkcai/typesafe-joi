@@ -1,6 +1,6 @@
-import { OptionalSchema, RequiredSchema } from "./schema";
+import { OptionalSchema, RequiredSchema } from ".";
 import { AbstractSchema } from "./base";
-import { Reference } from "./joi";
+import { Reference } from "../lib/joi";
 
 export interface NumberSchema<Value = number | undefined> extends OptionalSchema, NumberSchemaType<NumberSchema, Value> {}
 export interface RequiredNumberSchema<Value = number> extends RequiredSchema, NumberSchemaType<RequiredNumberSchema, Value> {}

@@ -1,8 +1,8 @@
-import { IS_SPARSE } from "./symbols";
-import { OptionalSchema, RequiredSchema, SchemaLike, SchemaType, SchemaValues } from "./schema";
+import { IS_SPARSE } from "../lib/symbols";
+import { OptionalSchema, RequiredSchema, SchemaLike, SchemaType, SchemaValues } from ".";
 import { AbstractSchema } from "./base";
-import { Reference } from "./joi";
-import { ArrayItemType, MergeArray, ExcludeUndefined, ExcludeFromArray } from "./util";
+import { Reference } from "../lib/joi";
+import { ArrayItemType, MergeArray, ExcludeUndefined, ExcludeFromArray } from "../lib/util";
 
 export interface SparseSchema {
   [IS_SPARSE]: true

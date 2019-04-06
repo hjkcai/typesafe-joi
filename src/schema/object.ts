@@ -1,7 +1,7 @@
-import { OptionalSchema, RequiredSchema, SchemaType, SchemaMap, SchemaMapValue, SchemaInstance, SchemaLike, SchemaValue } from "./schema";
+import { OptionalSchema, RequiredSchema, SchemaType, SchemaMap, SchemaMapValue, SchemaInstance, SchemaLike, SchemaValue } from ".";
 import { AbstractSchema } from "./base";
-import { MergeObject, ConstructorOf } from "./util";
-import { RenameOptions, Reference } from "./joi";
+import { MergeObject, ConstructorOf } from "../lib/util";
+import { RenameOptions, Reference } from "../lib/joi";
 
 export interface ObjectSchema<Value = {} | undefined> extends OptionalSchema, ObjectSchemaType<ObjectSchema, Value> {}
 export interface RequiredObjectSchema<Value = {}> extends RequiredSchema, ObjectSchemaType<RequiredObjectSchema, Value> {}

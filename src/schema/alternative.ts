@@ -1,4 +1,4 @@
-import { SchemaLike, OptionalSchema, RequiredSchema, SchemaValues } from "./schema";
+import { SchemaLike, OptionalSchema, RequiredSchema, SchemaValues } from ".";
 import { AbstractSchema } from "./base";
 
 export interface When<Then extends SchemaLike = never, Otherwise extends SchemaLike = never> {

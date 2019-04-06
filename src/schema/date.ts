@@ -1,6 +1,6 @@
-import { OptionalSchema, RequiredSchema } from "./schema";
+import { OptionalSchema, RequiredSchema } from ".";
 import { AbstractSchema } from "./base";
-import { Reference } from "./joi";
+import { Reference } from "../lib/joi";
 
 export interface DateSchema<Value = Date | undefined> extends OptionalSchema, DateSchemaType<DateSchema, Value> {}
 export interface RequiredDateSchema<Value = Date> extends RequiredSchema, DateSchemaType<RequiredDateSchema, Value> {}

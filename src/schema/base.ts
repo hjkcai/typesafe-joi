@@ -1,7 +1,7 @@
-import { JoiObject, ValidationOptions, ValidationResult, ValidationError, Reference, ValidationErrorFunction, ErrorOptions, Description } from "./joi";
-import { VALUE } from "./symbols";
-import { AnyType, ExcludeUndefined } from "./util";
-import { SchemaType, SchemaValue, RequiredSchemaType, OptionalSchemaType, SchemaLike } from "./schema";
+import { JoiObject, ValidationOptions, ValidationResult, ValidationError, Reference, ValidationErrorFunction, ErrorOptions, Description } from "../lib/joi";
+import { VALUE } from "../lib/symbols";
+import { AnyType, ExcludeUndefined } from "../lib/util";
+import { SchemaType, SchemaValue, RequiredSchemaType, OptionalSchemaType, SchemaLike } from ".";
 import { WhenIs, AlternativesSchema, When } from "./alternative";
 
 export interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, Value = any> extends JoiObject {

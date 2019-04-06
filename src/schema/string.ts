@@ -1,6 +1,6 @@
-import { OptionalSchema, RequiredSchema } from "./schema";
+import { OptionalSchema, RequiredSchema } from ".";
 import { AbstractSchema } from "./base";
-import { Reference, Base64Options, StringRegexOptions, EmailOptions, IpOptions, UriOptions, DataUriOptions, GuidOptions, HexOptions } from "./joi";
+import { Reference, Base64Options, StringRegexOptions, EmailOptions, IpOptions, UriOptions, DataUriOptions, GuidOptions, HexOptions } from "../lib/joi";
 
 export interface StringSchema<Value = string | undefined> extends OptionalSchema, StringSchemaType<StringSchema, Value> {}
 export interface RequiredStringSchema<Value = string> extends RequiredSchema, StringSchemaType<RequiredStringSchema, Value> {}
