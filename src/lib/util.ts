@@ -7,11 +7,11 @@ export type ArrayItemType<T> = T extends (infer U)[] ? U : never
 export type FilterKeys<T extends object, U> = { [key in keyof T]: T[key] extends U ? key : never }[keyof T]
 
 /** Keep keys that its value extends `U` */
-export type Filter<T extends object, U> = { [key in FilterKeys<T, U>]: T[key] }
+export type FilterValues<T extends object, U> = { [key in FilterKeys<T, U>]: T[key] }
 
 // Reversed version of `FilterKeys` and `Filter`
-export type FilterOutKeys<T extends object, U> = { [key in keyof T]: T[key] extends U ? never : key }[keyof T]
-export type FilterOut<T extends object, U> = { [key in FilterOutKeys<T, U>]: T[key] }
+export type OmitKeys<T extends object, U> = { [key in keyof T]: T[key] extends U ? never : key }[keyof T]
+export type OmitValues<T extends object, U> = { [key in OmitKeys<T, U>]: T[key] }
 
 /**
  * Union the array types of `T` and `U`, leaving other types of `T` unmodified

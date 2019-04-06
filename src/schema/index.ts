@@ -12,7 +12,7 @@ import { SymbolSchema, RequiredSymbolSchema } from "./symbol";
 import { AlternativesSchema, RequiredAlternativesSchema } from "./alternative";
 import { LazySchema, RequiredLazySchema } from "./lazy";
 import { VALUE, IS_REQUIRED } from "../lib/symbols";
-import { Filter, FilterOut } from "../lib/util";
+import { FilterValues, OmitValues } from "../lib/util";
 
 /**
  * Joi normal schema and literal schema
@@ -156,8 +156,8 @@ export type SchemaValue<Schema extends SchemaLike> = (
  * type A = SchemaMapValue<{ a: StringSchema, b: RequiredStringSchema }> // { a?: string, b: string }
  */
 export type SchemaMapValue<Map extends SchemaMap> = (
-  { [key in keyof SchemaMapLiteral<Filter<Map, RequiredSchema>>]: SchemaMapLiteral<Filter<Map, RequiredSchema>>[key] }
-  & { [key in keyof SchemaMapLiteral<FilterOut<Map, RequiredSchema>>]?: SchemaMapLiteral<FilterOut<Map, RequiredSchema>>[key] }
+  { [key in keyof SchemaMapLiteral<FilterValues<Map, RequiredSchema>>]: SchemaMapLiteral<FilterValues<Map, RequiredSchema>>[key] }
+  & { [key in keyof SchemaMapLiteral<OmitValues<Map, RequiredSchema>>]?: SchemaMapLiteral<OmitValues<Map, RequiredSchema>>[key] }
 )
 
 /** Convert every entry in a `SchemaMap` into literal */
