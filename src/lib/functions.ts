@@ -5,34 +5,35 @@ import {
 } from '..';
 
 /** Generates a schema object that matches any data type. */
-export declare function any (): AnySchema
+export declare function any<Value = undefined> (): AnySchema<Value>
 
 /** Generates a schema object that matches an array data type. */
-export declare function array (): ArraySchema
+export declare function array<Value = never[] | undefined> (): ArraySchema<Value>
 
 /** Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', and 'no'). Can also be called via bool(). */
-export declare function bool (): BooleanSchema
+export declare function bool<Value = boolean | undefined> (): BooleanSchema<Value>
 
 /** Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', and 'no'). Can also be called via bool(). */
-export declare function boolean (): BooleanSchema
+export declare function boolean<Value = boolean | undefined> (): BooleanSchema<Value>
 
 /* Generates a schema object that matches a Buffer data type (as well as the strings which will be converted to Buffers). */
-export declare function binary (): BinarySchema
+export declare function binary<Value = Buffer> (): BinarySchema<Value>
 
 /** Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds). */
-export declare function date (): DateSchema
+export declare function date<Value = Date | undefined> (): DateSchema<Value>
 
 /** Generates a schema object that matches a function type. */
-export declare function func (): FunctionSchema
+export declare function func<Value = Function | undefined> (): FunctionSchema<Value>
 
 /** Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). */
-export declare function number (): NumberSchema
+export declare function number<Value = number | undefined> (): NumberSchema<Value>
 
 /** Generates a schema object that matches an object data type (as well as JSON strings that have been parsed into objects). */
-export declare function object<T extends SchemaMap = {}> (schema?: T): ObjectSchema<SchemaMapValue<T>>
+export declare function object (): ObjectSchema<{}>
+export declare function object<T extends SchemaMap = {}> (schema: T): ObjectSchema<SchemaMapValue<T>>
 
 /** Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with allow(''). */
-export declare function string (): StringSchema
+export declare function string<Value = string | undefined> (): StringSchema<Value>
 
 /** Generates a type that will match one of the provided alternative schemas */
 export declare function alternatives<T extends SchemaLike[]> (types: T): AlternativesSchema<SchemaValues<T>>
@@ -47,7 +48,7 @@ export declare function alt<T extends SchemaLike[]> (...types: T): AlternativesS
  * Supports the same methods of the any() type.
  * This is mostly useful for recursive schemas
  */
-export declare function lazy<T> (cb: () => AbstractSchema<any, T>, options?: LazyOptions): LazySchema<T>
+export declare function lazy<Value> (cb: () => Schema<Value>, options?: LazyOptions): LazySchema<Value>
 
 // ----------------------------------------------------------------------------
 // Other joi exports
