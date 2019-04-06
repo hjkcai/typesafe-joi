@@ -1,6 +1,6 @@
 import {
   AnySchema, ArraySchema, BooleanSchema, BinarySchema, DateSchema, FunctionSchema, NumberSchema, ObjectSchema, StringSchema, AlternativesSchema, LazySchema,
-  Schema, SchemaLike, SchemaMap, SchemaMapValue, SchemaValue, SchemaValues, AbstractSchema,
+  Schema, SchemaLike, SchemaMap, SchemaMapValue, SchemaValue, SchemaValues,
   LazyOptions, ValidationOptions, ValidationResult, ValidationError, ReferenceOptions, Reference, Extension
 } from '..';
 
@@ -48,7 +48,7 @@ export declare function alt<T extends SchemaLike[]> (...types: T): AlternativesS
  * Supports the same methods of the any() type.
  * This is mostly useful for recursive schemas
  */
-export declare function lazy<Value> (cb: () => Schema<Value>, options?: LazyOptions): LazySchema<Value>
+export declare function lazy<Schema extends SchemaLike> (cb: () => Schema, options?: LazyOptions): LazySchema<SchemaValue<Schema>>
 
 // ----------------------------------------------------------------------------
 // Other joi exports
