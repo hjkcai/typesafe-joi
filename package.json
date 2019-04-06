@@ -12,6 +12,11 @@
     "typescript",
     "validation"
   ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "shx rm -r dist",
+    "prepublishOnly": "yarpm run clean && yarpm run build"
+  },
   "dependencies": {
     "@types/joi": "~14.3.0",
     "@types/node": "*"
@@ -19,5 +24,9 @@
   "peerDependencies": {
     "joi": "~14.3.0",
     "typescript": ">=3.0.0"
+  },
+  "devDependencies": {
+    "shx": "^0.3.2",
+    "yarpm": "^0.2.1"
   }
 }
