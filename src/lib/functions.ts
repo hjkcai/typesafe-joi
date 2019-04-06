@@ -1,5 +1,5 @@
 import {
-  AnySchema, ArraySchema, BooleanSchema, BinarySchema, DateSchema, NumberSchema, ObjectSchema, StringSchema, AlternativesSchema, LazySchema,
+  AnySchema, ArraySchema, BooleanSchema, BinarySchema, DateSchema, FunctionSchema, NumberSchema, ObjectSchema, StringSchema, AlternativesSchema, LazySchema,
   Schema, SchemaLike, SchemaMap, SchemaMapValue, SchemaValue, SchemaValues, AbstractSchema,
   LazyOptions, ValidationOptions, ValidationResult, ValidationError, ReferenceOptions, Reference, Extension
 } from '..';
@@ -21,6 +21,9 @@ export declare function binary (): BinarySchema
 
 /** Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds). */
 export declare function date (): DateSchema
+
+/** Generates a schema object that matches a function type. */
+export declare function func (): FunctionSchema
 
 /** Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). */
 export declare function number (): NumberSchema
