@@ -22,5 +22,6 @@ export * from './schema'
 export * from './schema/string'
 export * from './schema/symbol'
 export * from './lib/util'
+export * from './lib/functions'
 
 module.exports = require('joi')
