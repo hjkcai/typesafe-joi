@@ -19,7 +19,6 @@ export {
   IPOptions,
   StringRegexOptions,
   JoiObject,
-  ValidationResult,
   Description,
   Context,
   State,
@@ -31,6 +30,11 @@ export {
   Err,
   LazyOptions
 } from 'joi'
+
+export interface ValidationResult<T> extends Pick<Promise<T>, 'then' | 'catch'> {
+  error: Joi.ValidationError | null;
+  value: T;
+}
 
 export type ExtensionBoundSchema = Schema & {
   /**
