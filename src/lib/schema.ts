@@ -15,6 +15,8 @@ export interface Schema<TValue extends Value.AnyValue> {
 }
 
 export namespace Schema {
+  export type AnySchema = Schema<Value.AnyValue>
+
   export type SchemaMap = { [Key in keyof any]: SchemaLike }
   export type SchemaLike = string | number | boolean | null | Schema<Value.AnyValue> | Schema<Value.AnyValue>[] | SchemaMap
 
@@ -87,7 +89,7 @@ export namespace Schema {
     }
   )
 
-  export type getValueSchema<TSchema extends Schema<Value.AnyValue>> = (
+  export type getValue<TSchema extends Schema<Value.AnyValue>> = (
     TSchema extends Schema<infer TValue>
     ? TValue
     : never
