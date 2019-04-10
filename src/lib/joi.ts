@@ -36,6 +36,8 @@ export interface ValidationResult<T> extends Pick<Promise<T>, 'then' | 'catch'> 
   value: T;
 }
 
+export type ValidationCallback<T> = (err: Joi.ValidationError, value: T) => void
+
 export type ExtensionBoundSchema = Schema & {
   /**
    * Creates a joi error object.
