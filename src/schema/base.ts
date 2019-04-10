@@ -1,96 +1,87 @@
-import { JoiObject, ValidationOptions, ValidationResult, ValidationError, Reference, ValidationErrorFunction, ErrorOptions, Description, When, WhenIs } from "../lib/joi";
-import { VALUE, REQUIRED_SCHEMA_TYPE, OPTIONAL_SCHEMA_TYPE } from "../lib/symbols";
-import { AnyType, ExcludeUndefined } from "../lib/util";
-import { SchemaType, SchemaValue, SchemaLike } from ".";
-import { AlternativesSchema } from "./alternative";
+import { Value } from '../lib/value'
+import { Schema } from '../lib/schema'
+import { AnyType } from '../lib/util';
+import * as JoiLib from "../lib/joi";
 
-export interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, Value = any> extends JoiObject {
-  schemaType: string
-  [VALUE]: Value
-  [REQUIRED_SCHEMA_TYPE]: unknown
-  [OPTIONAL_SCHEMA_TYPE]: unknown
+// TODO: complete SchemaType by a map
+type SchemaType<TSchemaType extends string, TValue extends Value.AnyValue> = AbstractSchema<TSchemaType, TValue>
+
+export interface AbstractSchema<TSchemaType extends string, TValue extends Value.AnyValue> extends Schema<TValue>, JoiLib.JoiObject {
+  schemaType: TSchemaType
 
   /** Validates a value using the schema and options. */
-  validate (value: any, options?: ValidationOptions): ValidationResult<Value>
-  validate (value: any, callback: (err: ValidationError, value: Value) => void): void
-  validate (value: any, options: ValidationOptions, callback: (err: ValidationError, value: Value) => void): void
+  validate (value: any, options?: JoiLib.ValidationOptions): JoiLib.ValidationResult<Value>
+  validate (value: any, callback: JoiLib.ValidationCallback<Value.getType<TValue>>): void
+  validate (value: any, options: JoiLib.ValidationOptions, callback: JoiLib.ValidationCallback<Value.getType<TValue>>): void
 
   /** Whitelists a value */
-  allow<T extends AnyType[]> (values: T): SchemaType<Schema, Value | T[number]>
-  allow<T extends AnyType[]> (...values: T): SchemaType<Schema, Value | T[number]>
+  allow<T extends AnyType[]> (values: T): SchemaType<TSchemaType, Value.allow<TValue, T[number]>>
+  allow<T extends AnyType[]> (...values: T): SchemaType<TSchemaType, Value.allow<TValue, T[number]>>
 
   /** Adds the provided values into the allowed whitelist and marks them as the only valid values allowed. */
-  valid<T extends AnyType[]> (values: T): SchemaType<Schema, T[number]>
-  valid<T extends AnyType[]> (...values: T): SchemaType<Schema, T[number]>
-  only<T extends AnyType[]> (values: T): SchemaType<Schema, T[number]>
-  only<T extends AnyType[]> (...values: T): SchemaType<Schema, T[number]>
-  equal<T extends AnyType[]> (values: T): SchemaType<Schema, T[number]>
-  equal<T extends AnyType[]> (...values: T): SchemaType<Schema, T[number]>
+  valid<T extends AnyType[]> (values: T): SchemaType<TSchemaType, Value.allowOnly<TValue, T[number]>>
+  valid<T extends AnyType[]> (...values: T): SchemaType<TSchemaType, Value.allowOnly<TValue, T[number]>>
+
+  /** Adds the provided values into the allowed whitelist and marks them as the only valid values allowed. */
+  only<T extends AnyType[]> (values: T): SchemaType<TSchemaType, Value.allowOnly<TValue, T[number]>>
+  only<T extends AnyType[]> (...values: T): SchemaType<TSchemaType, Value.allowOnly<TValue, T[number]>>
+
+  /** Adds the provided values into the allowed whitelist and marks them as the only valid values allowed. */
+  equal<T extends AnyType[]> (values: T): SchemaType<TSchemaType, Value.allowOnly<TValue, T[number]>>
+  equal<T extends AnyType[]> (...values: T): SchemaType<TSchemaType, Value.allowOnly<TValue, T[number]>>
 
   /** Blacklists a value */
-  invalid<T extends AnyType[]> (values: T): SchemaType<Schema, T[number] extends never ? Value : Exclude<Value, T[number]>>
-  invalid<T extends AnyType[]> (...values: T): SchemaType<Schema, T[number] extends never ? Value : Exclude<Value, T[number]>>
-  disallow<T extends AnyType[]> (values: T): SchemaType<Schema, T[number] extends never ? Value : Exclude<Value, T[number]>>
-  disallow<T extends AnyType[]> (...values: T): SchemaType<Schema, T[number] extends never ? Value : Exclude<Value, T[number]>>
-  not<T extends AnyType[]> (values: T): SchemaType<Schema, T[number] extends never ? Value : Exclude<Value, T[number]>>
-  not<T extends AnyType[]> (...values: T): SchemaType<Schema, T[number] extends never ? Value : Exclude<Value, T[number]>>
+  invalid<T extends AnyType[]> (values: T): SchemaType<TSchemaType, Value.disallow<TValue, T[number]>>
+  invalid<T extends AnyType[]> (...values: T): SchemaType<TSchemaType, Value.disallow<TValue, T[number]>>
+
+  /** Blacklists a value */
+  disallow<T extends AnyType[]> (values: T): SchemaType<TSchemaType, Value.disallow<TValue, T[number]>>
+  disallow<T extends AnyType[]> (...values: T): SchemaType<TSchemaType, Value.disallow<TValue, T[number]>>
+
+  /** Blacklists a value */
+  not<T extends AnyType[]> (values: T): SchemaType<TSchemaType, Value.disallow<TValue, T[number]>>
+  not<T extends AnyType[]> (...values: T): SchemaType<TSchemaType, Value.disallow<TValue, T[number]>>
 
   /** Returns a new type that is the result of adding the rules of one type to another. */
-  concat<T extends AbstractSchema> (schema: T): SchemaType<Schema, Value | SchemaValue<T>>
+  concat<TSchemaLike extends Schema.SchemaLike> (schema: TSchemaLike): SchemaType<TSchemaType, Value.concat<TValue, Schema.getValue<Schema.fromSchemaLike<TSchemaLike>>>>
 
   /** Marks a key as required which will not allow undefined as value. All keys are optional by default. */
-  required (): SchemaType<Schema[typeof REQUIRED_SCHEMA_TYPE], ExcludeUndefined<Value>>
-  exist (): SchemaType<Schema[typeof REQUIRED_SCHEMA_TYPE], ExcludeUndefined<Value>>
+  required (): SchemaType<TSchemaType, Value.required<TValue>>
+
+  /** Marks a key as required which will not allow undefined as value. All keys are optional by default. */
+  exist (): SchemaType<TSchemaType, Value.required<TValue>>
 
   /** Marks a key as optional which will allow undefined as values. Used to annotate the schema for readability as all keys are optional by default. */
-  optional (): SchemaType<Schema[typeof OPTIONAL_SCHEMA_TYPE], Value | undefined>
+  optional (): SchemaType<TSchemaType, Value.optional<TValue>>
 
   /** Marks a key as forbidden which will not allow any value except undefined. Used to explicitly forbid keys. */
-  forbidden (): SchemaType<Schema, never>
+  forbidden (): SchemaType<TSchemaType, Value.EmptyValue>
 
-  /**
-   * Marks a key to be removed from a resulting object or array after validation. Used to sanitize output.
-   */
-  strip (): this
+  /** Marks a key to be removed from a resulting object or array after validation. Used to sanitize output. */
+  strip (): SchemaType<TSchemaType, Value.EmptyValue>
 
-  /**
-   * Annotates the key
-   */
+  /** Annotates the key. */
   description (desc: string): this
 
-  /**
-   * Annotates the key
-   */
+  /** Annotates the key. */
   notes (notes: string | string[]): this
 
-  /**
-   * Annotates the key
-   */
+  /** Annotates the key. */
   tags (notes: string | string[]): this
 
-  /**
-   * Attaches metadata to the key.
-   */
-  meta (meta: object): this
+  /** Attaches metadata to the key. */
+  meta (meta: Record<any, any>): this
 
-  /**
-   * Annotates the key with an example value, must be valid.
-   */
-  example (value: any): this
+  /** Annotates the key with an example value, must be valid. */
+  example (...value: any[]): this
 
-  /**
-   * Annotates the key with an unit name.
-   */
+  /** Annotates the key with an unit name. */
   unit (name: string): this
 
-  /**
-   * Overrides the global validate() options for the current key and any sub-key.
-   */
-  options (options: ValidationOptions): this
+  /** Overrides the global validate() options for the current key and any sub-key. */
+  options (options: JoiLib.ValidationOptions): this
 
-  /**
-   * Sets the options.convert options to false which prevent type casting for the current key and any child keys.
-   */
+  /** Sets the options.convert options to false which prevent type casting for the current key and any child keys. */
   strict (isStrict?: boolean): this
 
   /**
@@ -111,34 +102,23 @@ export interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, V
    * Additionally, when specifying a method you must either have a description property on your method or the
    *  second parameter is required.
    */
-  default (value?: any, description?: string): this
+  default<TDefault> (value?: TDefault, description?: string): SchemaType<TSchemaType, Value.setDefault<TValue, TDefault>>
 
-  /**
-   * Returns a new type that is the result of adding the rules of one type to another.
-   */
-  concat (schema: this): this
+  /** Converts the type into an alternatives type where the conditions are merged into the type definition where. */
+  when<T extends JoiLib.WhenIs> (ref: string | JoiLib.Reference, options: T): unknown
+  when<T extends JoiLib.When> (ref: Schema.SchemaLike, options: T): unknown
 
-  /**
-   * Converts the type into an alternatives type where the conditions are merged into the type definition where:
-   */
-  when<T extends WhenIs> (ref: string | Reference, options: T): AlternativesSchema<T extends When<infer Then, infer Otherwise> ? SchemaValue<Then | Otherwise> : never>
-  when<T extends When> (ref: AbstractSchema, options: T): AlternativesSchema<T extends When<infer Then, infer Otherwise> ? SchemaValue<Then | Otherwise> : never>
-
-  /**
-   * Overrides the key name in error messages.
-   */
+  /** Overrides the key name in error messages. */
   label (name: string): this
 
-  /**
-   * Outputs the original untouched value instead of the casted value.
-   */
+  /** Outputs the original untouched value instead of the casted value. */
   raw (isRaw?: boolean): this
 
   /**
    * Considers anything that matches the schema to be empty (undefined).
    * @param schema - any object or joi schema to match. An undefined schema unsets that rule.
    */
-  empty (schema?: SchemaLike): this
+  empty (schema?: Schema.SchemaLike): this
 
   /**
    * Overrides the default joi error with a custom error if the rule fails where:
@@ -158,10 +138,8 @@ export interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, V
    * override, that error will be returned and the override will be ignored (unless the `abortEarly`
    * option has been set to `false`).
    */
-  error (err: Error | ValidationErrorFunction, options?: ErrorOptions): this
+  error (err: Error | JoiLib.ValidationErrorFunction, options?: JoiLib.ErrorOptions): this
 
-  /**
-   * Returns a plain object representing the schema's rules and properties
-   */
-  describe (): Description
+  /** Returns a plain object representing the schema's rules and properties. */
+  describe (): JoiLib.Description
 }
