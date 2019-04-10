@@ -126,6 +126,15 @@ export namespace Value {
     /* isRequired */ boolean
   >
 
+  export type EmptyValue = Value<
+    /* base */ never,
+    /* augment */ never,
+    /* allowed */ never,
+    /* disallowed */ never,
+    /* default */ never,
+    /* isRequired */ true
+  >
+
   /** Transform a schema map into object literal type. */
   export type transformSchemaMap<T extends Schema.InternalSchemaMap> = MakeOptional<{
     [Key in Exclude<keyof T, typeof IS_INTERNAL_SCHEMA_MAP>]: (
@@ -177,6 +186,15 @@ export namespace Value {
     )
     : never
   )
+
+  /** Set the disallowed type of a `Value`. */
+  export type disallow<TValue extends AnyValue, TDisallowed = never> = unknown
+
+  /** Merge two a value types by adding the rules of one type to another. */
+  export type concat<T extends AnyValue, U extends AnyValue> = unknown
+
+  /** Set the default type of a `Value`. */
+  export type setDefault<TValue extends AnyValue, TDefault = never> = unknown
 
   /** Make a `Value` required. */
   export type required<TValue extends AnyValue> = (
