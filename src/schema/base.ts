@@ -8,13 +8,15 @@ import { AnySchema } from './any';
 import { BinarySchema } from './binary';
 import { BooleanSchema } from './boolean';
 import { DateSchema } from './date';
+import { FunctionSchema } from './function';
 
 export interface SchemaCollection<TValue extends Value.AnyValue> {
   alternatives: AlternativesSchema<TValue>,
   any: AnySchema<TValue>,
   binary: BinarySchema<TValue>,
   boolean: BooleanSchema<TValue>,
-  date: DateSchema<TValue>
+  date: DateSchema<TValue>,
+  function: FunctionSchema<TValue>
 }
 
 export type SchemaType<TSchemaType extends string, TValue extends Value.AnyValue> = (

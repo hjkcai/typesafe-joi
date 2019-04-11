@@ -1,16 +1,8 @@
-import { OptionalSchema, RequiredSchema, SchemaType } from ".";
-import { AbstractSchema } from "./base";
+import { Value } from "../lib/value";
 import { Reference } from "../lib/joi";
-import { OPTIONAL_SCHEMA_TYPE, REQUIRED_SCHEMA_TYPE } from "../lib/symbols";
+import { AbstractSchema } from "./base";
 
-export interface FunctionSchema<Value = Function | undefined> extends OptionalSchema, FunctionSchemaType<FunctionSchema, Value> {}
-export interface RequiredFunctionSchema<Value = Function> extends RequiredSchema, FunctionSchemaType<RequiredFunctionSchema, Value> {}
-
-export interface FunctionSchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
-  schemaType: 'function'
-  [OPTIONAL_SCHEMA_TYPE]: FunctionSchema
-  [REQUIRED_SCHEMA_TYPE]: RequiredFunctionSchema
-
+export interface FunctionSchema<TValue extends Value.AnyValue = Value<Function>> extends AbstractSchema<'boolean', TValue> {
   /**
    * Specifies the arity of the function where:
    * @param n - the arity expected.
@@ -32,5 +24,5 @@ export interface FunctionSchemaType<Schema extends AbstractSchema, Value> extend
   /**
    * Requires the function to be a Joi reference.
    */
-  ref (): SchemaType<Schema, Reference>
+  ref (): FunctionSchema<Value.replaceBase<TValue, Reference>>
 }
