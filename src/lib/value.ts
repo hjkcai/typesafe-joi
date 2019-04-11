@@ -1,35 +1,6 @@
 import { Schema } from './schema'
 import { IS_INTERNAL_SCHEMA_MAP } from "./symbols";
-
-type IsAny<T, TrueType = never, FalseType = never> = 1 extends (T extends never ? 1 : 0) ? TrueType : FalseType
-type IsInvariant<T, U, TrueType = true, FalseType = false> = [T] extends [U] ? ([U] extends [T] ? TrueType : FalseType) : FalseType
-type IsInvariantWithoutAny<T, U, TrueType = true, FalseType = false> = IsAny<T, FalseType, IsAny<U, FalseType, IsInvariant<T, U, TrueType, FalseType>>>
-
-/**
- * @example
- * type A = IsTrue<any>; // false
- * type B = IsTrue<never>; // false
- * type C = IsTrue<unknown>; // error
- * type D = IsTrue<boolean>; // false
- * type E = IsTrue<false>; // false
- * type F = IsTrue<true>; // true
- */
-type IsTrue<T extends boolean, TrueType = true, FalseType = false> = IsInvariantWithoutAny<T, true, TrueType, FalseType>
-type IsNever<T, TrueType = true, FalseType = false> = IsInvariant<T, never, TrueType, FalseType>
-
-// type FilterKeys<T extends object, U> = { [key in keyof T]: U extends IsAny<T[key], never, T[key]> ? key : never }[keyof T]
-// type FilterValues<T extends object, U> = IsInvariant<T, never, never, { [key in FilterKeys<T, U>]: T[key] }>
-
-// type OmitKeys<T extends object, U> = { [key in keyof T]: U extends IsAny<T[key], never, T[key]> ? never : key }[keyof T]
-// type OmitValues<T extends object, U> = IsInvariant<T, never, never, { [key in OmitKeys<T, U>]: T[key] }>
-
-// type OmitAny<T> = IsAny<T, never, T>
-// type MakeOptional<T extends object> = OmitAny<OmitValues<T, undefined> & { [Key in keyof FilterValues<T, undefined>]?: FilterValues<T, undefined>[Key] }>
-
-type FilterUndefinedKeys<T extends object> = { [Key in keyof T]: undefined extends T[Key] ? Key : never }[keyof T]
-type OmitUndefinedKeys<T extends object> = { [Key in keyof T]: undefined extends T[Key] ? never : Key }[keyof T]
-
-type MakeOptional<T extends object> = Exclude<({ [Key in OmitUndefinedKeys<T>]: T[Key] } & { [Key in FilterUndefinedKeys<T>]?: T[Key] }) | undefined, undefined>
+import { MakeOptional, IsNever, IsTrue } from './util';
 
 /**
  * A structure stores all information needed to match Joi's validation logic.
@@ -253,46 +224,3 @@ export namespace Value {
     : never
   )
 }
-
-// type ObjectValue<T> = Value<Record<any, any>, Schema.InternalSchemaMap & T, never, never, never, true>
-// type ObjectSchema<T> = Schema<Value<Record<any, any>, Schema.InternalSchemaMap & T, never, never, never, true>>
-// type NumberSchema = Schema<Value<number, never, never, never, never, true>>
-// type StringSchema = Schema<Value<string, never, never, never, never, true>>
-// type BooleanSchema = Schema<Value<boolean, never, never, never, never, true>>
-
-// interface Test {
-//   a: {
-//     b: {
-//       c: string,
-//       ccc: boolean
-//     },
-//     bbb: string
-//   },
-//   aaa: string
-// }
-
-// type A = ObjectValue<{
-//   a: ObjectSchema<{
-//     b: ObjectSchema<{
-//       c: NumberSchema,
-//       cc: NumberSchema
-//     }>,
-//     bb: NumberSchema
-//   }>,
-//   aa: NumberSchema
-// }>
-
-// type B = ObjectValue<{
-//   a: ObjectSchema<{
-//     b: ObjectSchema<{
-//       c: StringSchema,
-//       ccc: BooleanSchema
-//     }>,
-//     bbb: StringSchema
-//   }>,
-//   aaa: StringSchema
-// }>
-
-// type C = Value.deepMerge<Value<Record<any, any>>, B>
-// // type C = Value.deepAssign<Value<number>, Value<string>>
-// type Cv = Value.getType<C>
