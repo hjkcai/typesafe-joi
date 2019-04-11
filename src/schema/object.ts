@@ -1,7 +1,7 @@
 import { Value } from "../lib/value";
 import { Schema } from "../lib/schema";
 import { ConstructorOf } from "../lib/util";
-import { AbstractSchema } from "./base";
+import { AbstractSchema } from ".";
 import { RenameOptions, Reference } from "../lib/joi";
 
 export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, any>>> extends AbstractSchema<'object', TValue> {

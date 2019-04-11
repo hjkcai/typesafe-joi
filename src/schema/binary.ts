@@ -1,5 +1,5 @@
 import { Value } from "../lib/value";
-import { AbstractSchema } from "./base";
+import { AbstractSchema } from ".";
 
 export interface BinarySchema<TValue extends Value.AnyValue = Value<Buffer>> extends AbstractSchema<'binary', TValue> {
   /** Sets the string encoding format if a string input is converted to a buffer. */

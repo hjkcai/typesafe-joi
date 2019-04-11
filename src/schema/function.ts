@@ -1,6 +1,6 @@
 import { Value } from "../lib/value";
 import { Reference } from "../lib/joi";
-import { AbstractSchema } from "./base";
+import { AbstractSchema } from ".";
 
 export interface FunctionSchema<TValue extends Value.AnyValue = Value<Function>> extends AbstractSchema<'boolean', TValue> {
   /**

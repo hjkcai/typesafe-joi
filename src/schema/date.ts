@@ -1,6 +1,6 @@
 import { Value } from "../lib/value";
 import { Reference } from "../lib/joi";
-import { AbstractSchema } from "./base";
+import { AbstractSchema } from ".";
 
 export interface DateSchema<TValue extends Value.AnyValue = Value<Date>> extends AbstractSchema<'date', TValue> {
   /**

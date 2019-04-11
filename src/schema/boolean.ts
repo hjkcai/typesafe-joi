@@ -1,5 +1,5 @@
 import { Value } from "../lib/value";
-import { AbstractSchema } from "./base";
+import { AbstractSchema } from ".";
 
 export interface BooleanSchema<TValue extends Value.AnyValue = Value<boolean>> extends AbstractSchema<'boolean', TValue> {
   /**

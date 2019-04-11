@@ -1,5 +1,5 @@
 import { Value } from "../lib/value";
-import { AbstractSchema } from "./base";
+import { AbstractSchema } from ".";
 import * as JoiLib from "../lib/joi";
 
 export interface StringSchema<TValue extends Value.AnyValue = Value<string>> extends AbstractSchema<'string', TValue> {

@@ -2,7 +2,7 @@ import { Value } from "../lib/value";
 import { Schema } from "../lib/schema";
 import { Reference } from "../lib/joi";
 import { ArrayItemType } from "../lib/util";
-import { AbstractSchema } from "./base";
+import { AbstractSchema } from ".";
 
 export interface ArraySchema<TValue extends Value.AnyValue = Value<any>> extends AbstractSchema<'array', TValue> {
   /**
