@@ -1,14 +1,12 @@
-import { SchemaLike, OptionalSchema, RequiredSchema, SchemaValues } from ".";
+import { Value } from "../lib/value";
+import { Schema } from "../lib/schema";
 import { AbstractSchema } from "./base";
-import { OPTIONAL_SCHEMA_TYPE, REQUIRED_SCHEMA_TYPE } from "../lib/symbols";
 
-export interface AlternativesSchema<Value = undefined> extends OptionalSchema, AlternativesSchemaType<AlternativesSchema, Value> {}
-export interface RequiredAlternativesSchema<Value = never> extends RequiredSchema, AlternativesSchemaType<RequiredAlternativesSchema, Value> {}
-
-export interface AlternativesSchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
-  schemaType: 'alternatives'
-  [OPTIONAL_SCHEMA_TYPE]: AlternativesSchema
-  [REQUIRED_SCHEMA_TYPE]: RequiredAlternativesSchema
-
-  try<T extends SchemaLike[]> (...types: T): AlternativesSchema<Value | SchemaValues<T>>
+export interface AlternativesSchema<TValue extends Value.AnyValue = Value<never>> extends AbstractSchema<'alternatives', TValue> {
+  try<TSchemaLike extends Schema.SchemaLike[]> (...types: TSchemaLike): AlternativesSchema<
+    Value.unionWithBase<
+      TValue,
+      Schema.getValueTypeFromSchemaLike<TSchemaLike[number]>
+    >
+  >
 }

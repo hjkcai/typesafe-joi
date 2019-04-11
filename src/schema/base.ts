@@ -3,9 +3,11 @@ import { Schema } from '../lib/schema'
 import { AnyType } from '../lib/util';
 import * as JoiLib from "../lib/joi";
 
+import { AlternativesSchema } from './alternative';
 import { BooleanSchema } from './boolean';
 
 export interface SchemaCollection<TValue extends Value.AnyValue> {
+  alternatives: AlternativesSchema<TValue>,
   boolean: BooleanSchema<TValue>
 }
 
