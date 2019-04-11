@@ -1,6 +1,7 @@
 export type AnyType = string | number | boolean | symbol | object | null | undefined
 export type ConstructorOf<T> = new (...args: any[]) => T
 export type ExcludeUndefined<T> = Exclude<T, undefined>
+export type ArrayItemType<T> = T extends (infer U)[] ? U : never
 
 /**
  * Union the array types of `T` and `U`, leaving other types of `T` unmodified.

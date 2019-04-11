@@ -1,31 +1,39 @@
-import { IS_SPARSE, OPTIONAL_SCHEMA_TYPE, REQUIRED_SCHEMA_TYPE } from "../lib/symbols";
-import { OptionalSchema, RequiredSchema, SchemaLike, SchemaType, SchemaValues } from ".";
-import { AbstractSchema } from "./base";
+import { Value } from "../lib/value";
+import { Schema } from "../lib/schema";
 import { Reference } from "../lib/joi";
-import { ArrayItemType, MergeArray, ExcludeUndefined, ExcludeFromArray } from "../lib/util";
+import { ArrayItemType } from "../lib/util";
+import { AbstractSchema } from "./base";
 
-export interface SparseSchema {
-  [IS_SPARSE]: true
-}
+export interface ArraySchema<TValue extends Value.AnyValue = Value<any>> extends AbstractSchema<'array', TValue> {
+  /**
+   * List the types allowed for the array values.
+   * type can be an array of values, or multiple values can be passed as individual arguments.
+   * If a given type is .required() then there must be a matching item in the array.
+   * If a type is .forbidden() then it cannot appear in the array.
+   * Required items can be added multiple times to signify that multiple items must be found.
+   * Errors will contain the number of items that didn't match.
+   * Any unmatched item having a label will be mentioned explicitly.
+   *
+   * @param type - a joi schema object to validate each array item against.
+   */
+  items<T extends Schema.SchemaLike[]> (types: T): ArraySchema<Value.mergeArray<TValue, Schema.getValueTypeFromSchemaLike<T[number]>>>
+  items<T extends Schema.SchemaLike[]> (...types: T): ArraySchema<Value.mergeArray<TValue, Schema.getValueTypeFromSchemaLike<T[number]>>>
 
-export interface NonSparseSchema {
-  [IS_SPARSE]: false
-}
+  /**
+   * Lists the types in sequence order for the array values where:
+   * @param type - a joi schema object to validate against each array item in sequence order. type can be an array of values, or multiple values can be passed as individual arguments.
+   * If a given type is .required() then there must be a matching item with the same index position in the array.
+   * Errors will contain the number of items that didn't match.
+   * Any unmatched item having a label will be mentioned explicitly.
+   */
+  ordered<T extends Schema.SchemaLike[]> (types: T): ArraySchema<Value.mergeArray<TValue, Schema.getValueTypeFromSchemaLike<T[number]>>>
+  ordered<T extends Schema.SchemaLike[]> (...types: T): ArraySchema<Value.mergeArray<TValue, Schema.getValueTypeFromSchemaLike<T[number]>>>
 
-export interface ArraySchema<Value = never[] | undefined>
-  extends OptionalSchema, NonSparseSchema, ArraySchemaType<ArraySchema, Value> {}
-
-export interface RequiredArraySchema<Value = never[]>
-  extends RequiredSchema, NonSparseSchema, ArraySchemaType<RequiredArraySchema, Value> {}
-
-export interface SparseArraySchema<Value = undefined[] | undefined>
-  extends OptionalSchema, SparseSchema, SparseArraySchemaType<SparseArraySchema, Value> {}
-
-export interface RequiredSparseArraySchema<Value = undefined[]>
-  extends RequiredSchema, SparseSchema, SparseArraySchemaType<RequiredSparseArraySchema, Value> {}
-
-export interface BaseArraySchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
-  schemaType: 'array'
+  /**
+   * Allow this array to be sparse.
+   */
+  sparse (enabled: false): ArraySchema<Value.mergeArray<TValue, undefined>>
+  sparse (enabled: true): ArraySchema<Value.excludeFromArray<TValue, undefined>>
 
   /**
    * Allow single values to be checked against rules as if it were provided as an array.
@@ -56,82 +64,4 @@ export interface BaseArraySchemaType<Schema extends AbstractSchema, Value> exten
   unique (): this
   unique (comparator: string): this
   unique (comparator: (a: ArrayItemType<Value>, b: ArrayItemType<Value>) => boolean): this
-}
-
-export interface ArraySchemaType<Schema extends AbstractSchema, Value> extends BaseArraySchemaType<Schema, Value> {
-  [OPTIONAL_SCHEMA_TYPE]: ArraySchema
-  [REQUIRED_SCHEMA_TYPE]: RequiredArraySchema
-
-  /**
-   * List the types allowed for the array values.
-   * type can be an array of values, or multiple values can be passed as individual arguments.
-   * If a given type is .required() then there must be a matching item in the array.
-   * If a type is .forbidden() then it cannot appear in the array.
-   * Required items can be added multiple times to signify that multiple items must be found.
-   * Errors will contain the number of items that didn't match.
-   * Any unmatched item having a label will be mentioned explicitly.
-   *
-   * @param type - a joi schema object to validate each array item against.
-   */
-  items<T extends SchemaLike[]> (types: T): SchemaType<Schema, MergeArray<Value, ExcludeUndefined<SchemaValues<T>>>>
-  items<T extends SchemaLike[]> (...types: T): SchemaType<Schema, MergeArray<Value, ExcludeUndefined<SchemaValues<T>>>>
-
-  /**
-   * Lists the types in sequence order for the array values where:
-   * @param type - a joi schema object to validate against each array item in sequence order. type can be an array of values, or multiple values can be passed as individual arguments.
-   * If a given type is .required() then there must be a matching item with the same index position in the array.
-   * Errors will contain the number of items that didn't match.
-   * Any unmatched item having a label will be mentioned explicitly.
-   */
-  ordered<T extends SchemaLike[]> (types: T): SchemaType<Schema, MergeArray<Value, ExcludeUndefined<SchemaValues<T>>>>
-  ordered<T extends SchemaLike[]> (...types: T): SchemaType<Schema, MergeArray<Value, ExcludeUndefined<SchemaValues<T>>>>
-
-  /**
-   * Allow this array to be sparse.
-   */
-  sparse (enabled: false): this
-  sparse (enabled: true): (
-    this extends RequiredSchema
-      ? RequiredSparseArraySchema<MergeArray<Value, undefined>>
-      : SparseArraySchema<MergeArray<Value, undefined>>
-  )
-}
-
-export interface SparseArraySchemaType<Schema extends AbstractSchema, Value> extends BaseArraySchemaType<Schema, Value> {
-  [OPTIONAL_SCHEMA_TYPE]: SparseArraySchema
-  [REQUIRED_SCHEMA_TYPE]: RequiredSparseArraySchema
-
-  /**
-   * List the types allowed for the array values.
-   * type can be an array of values, or multiple values can be passed as individual arguments.
-   * If a given type is .required() then there must be a matching item in the array.
-   * If a type is .forbidden() then it cannot appear in the array.
-   * Required items can be added multiple times to signify that multiple items must be found.
-   * Errors will contain the number of items that didn't match.
-   * Any unmatched item having a label will be mentioned explicitly.
-   *
-   * @param type - a joi schema object to validate each array item against.
-   */
-  items<T extends SchemaLike[]> (types: T): SchemaType<Schema, MergeArray<Value, SchemaValues<T> | undefined>>
-  items<T extends SchemaLike[]> (...types: T): SchemaType<Schema, MergeArray<Value, SchemaValues<T> | undefined>>
-
-  /**
-   * Lists the types in sequence order for the array values where:
-   * @param type - a joi schema object to validate against each array item in sequence order. type can be an array of values, or multiple values can be passed as individual arguments.
-   * If a given type is .required() then there must be a matching item with the same index position in the array.
-   * Errors will contain the number of items that didn't match.
-   * Any unmatched item having a label will be mentioned explicitly.
-   */
-  ordered<T extends SchemaLike[]> (types: T): SchemaType<Schema, MergeArray<Value, SchemaValues<T> | undefined>>
-  ordered<T extends SchemaLike[]> (...types: T): SchemaType<Schema, MergeArray<Value, SchemaValues<T> | undefined>>
-
-  /**
-   * Allow this array to be sparse.
-   */
-  sparse (enabled: true): this
-  sparse (enabled: false): (
-    this extends RequiredSchema
-      ? RequiredArraySchema<ExcludeFromArray<Value, undefined>>
-      : ArraySchema<ExcludeFromArray<Value, undefined>>
-  )
 }

@@ -5,6 +5,7 @@ import * as JoiLib from "../lib/joi";
 
 import { AlternativesSchema } from './alternative';
 import { AnySchema } from './any';
+import { ArraySchema } from './array';
 import { BinarySchema } from './binary';
 import { BooleanSchema } from './boolean';
 import { DateSchema } from './date';
@@ -18,6 +19,7 @@ import { SymbolSchema } from './symbol';
 export interface SchemaCollection<TValue extends Value.AnyValue> {
   alternatives: AlternativesSchema<TValue>,
   any: AnySchema<TValue>,
+  array: ArraySchema<TValue>,
   binary: BinarySchema<TValue>,
   boolean: BooleanSchema<TValue>,
   date: DateSchema<TValue>,

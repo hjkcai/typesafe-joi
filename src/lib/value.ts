@@ -253,6 +253,10 @@ export namespace Value {
     : never
   )
 
+  export type mergeArray<TValue extends AnyValue, T = never> = unknown
+
+  export type excludeFromArray<TValue extends AnyValue, T = never> = unknown
+
   /** Deeply merge two values with `InternalSchemaMap` types. */
   export type deepMerge<T extends AnyValue, U extends AnyValue> = (
     T extends Value<infer TBase, infer TOriginalAugment, infer TAllowed, infer TDisallowed, infer TDefault, infer TIsRequired>
