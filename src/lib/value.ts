@@ -126,6 +126,60 @@ export namespace Value {
     : never
   )
 
+  export type replaceBase<TValue extends AnyValue, U = never> = Value<
+    /* base */ U,
+    /* augment */ TValue['augment'],
+    /* allowed */ TValue['allowed'],
+    /* disallowed */ TValue['disallowed'],
+    /* default */ TValue['default'],
+    /* isRequired */ TValue['isRequired']
+  >
+
+  export type unionWithBase<TValue extends AnyValue, U = never> = Value<
+    /* base */ TValue['base'] | U,
+    /* augment */ TValue['augment'],
+    /* allowed */ TValue['allowed'],
+    /* disallowed */ TValue['disallowed'],
+    /* default */ TValue['default'],
+    /* isRequired */ TValue['isRequired']
+  >
+
+  export type intersectionWithBase<TValue extends AnyValue, U = never> = Value<
+    /* base */ TValue['base'] & U,
+    /* augment */ TValue['augment'],
+    /* allowed */ TValue['allowed'],
+    /* disallowed */ TValue['disallowed'],
+    /* default */ TValue['default'],
+    /* isRequired */ TValue['isRequired']
+  >
+
+  export type replaceAugment<TValue extends AnyValue, U = never> = Value<
+    /* base */ TValue['base'],
+    /* augment */ U,
+    /* allowed */ TValue['allowed'],
+    /* disallowed */ TValue['disallowed'],
+    /* default */ TValue['default'],
+    /* isRequired */ TValue['isRequired']
+  >
+
+  export type unionWithAugment<TValue extends AnyValue, U = never> = Value<
+    /* base */ TValue['base'],
+    /* augment */ TValue['augment'] | U,
+    /* allowed */ TValue['allowed'],
+    /* disallowed */ TValue['disallowed'],
+    /* default */ TValue['default'],
+    /* isRequired */ TValue['isRequired']
+  >
+
+  export type intersectionWithAugment<TValue extends AnyValue, U = never> = Value<
+    /* base */ TValue['base'],
+    /* augment */ TValue['augment'] & U,
+    /* allowed */ TValue['allowed'],
+    /* disallowed */ TValue['disallowed'],
+    /* default */ TValue['default'],
+    /* isRequired */ TValue['isRequired']
+  >
+
   /** Set the extra allowed type of a `Value`. */
   export type allow<TValue extends AnyValue, TAllowed = never> = (
     TValue extends Value<infer TBase, infer TAugment, infer TOringinalAllowed, infer TDisallowed, infer TDefault, infer TIsRequired>

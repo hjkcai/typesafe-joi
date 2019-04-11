@@ -100,4 +100,6 @@ export namespace Schema {
     ? Value.getType<TValue>
     : never
   )
+
+  export type getValueTypeFromSchemaLike<TSchemaLike extends SchemaLike> = getValueType<fromSchemaLike<TSchemaLike>>
 }
