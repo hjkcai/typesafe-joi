@@ -194,14 +194,18 @@ interface OptionalSchema {
   [IS_REQUIRED]: false
 }
 
+export type AbstractSchemaValidationCallback<
+    Value
+> = (err: ValidationError | null, value: Value) => void;
+
 interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, Value = any> extends JoiObject {
   schemaType: string
   [VALUE]: Value
 
   /** Validates a value using the schema and options. */
   validate (value: any, options?: ValidationOptions): ValidationResult<Value>
-  validate (value: any, callback: (err: ValidationError | null, value: Value) => void): void
-  validate (value: any, options: ValidationOptions, callback: (err: ValidationError | null, value: Value) => void): void
+  validate (value: any, callback: AbstractSchemaValidationCallback<Value>): void
+  validate (value: any, options: ValidationOptions, callback: AbstractSchemaValidationCallback<Value>): void
 
   /** Whitelists a value */
   allow<T extends AnyType[]> (values: T): SchemaType<Schema, Value | T[number]>
