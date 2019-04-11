@@ -200,8 +200,8 @@ interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, Value = 
 
   /** Validates a value using the schema and options. */
   validate (value: any, options?: ValidationOptions): ValidationResult<Value>
-  validate (value: any, callback: (err: ValidationError, value: Value) => void): void
-  validate (value: any, options: ValidationOptions, callback: (err: ValidationError, value: Value) => void): void
+  validate (value: any, callback: (err: ValidationError | null, value: Value) => void): void
+  validate (value: any, options: ValidationOptions, callback: (err: ValidationError | null, value: Value) => void): void
 
   /** Whitelists a value */
   allow<T extends AnyType[]> (values: T): SchemaType<Schema, Value | T[number]>
@@ -1220,10 +1220,20 @@ export interface JoiObject {
   isJoi: boolean
 }
 
-export interface ValidationResult<T> extends Pick<Promise<T>, 'then' | 'catch'> {
-  error: ValidationError
-  value: T
+export interface ValidationResultWithError<Value> extends Pick<Promise<Value>, 'then' | 'catch'> {
+    error: ValidationError
+    value: unknown
 }
+
+export interface ValidationResultWithSuccess<Value> extends Pick<Promise<Value>, 'then' | 'catch'> {
+    error: null
+    value: Value
+}
+
+export type ValidationResult<Value> = (
+    |   ValidationResultWithError<Value> 
+    | ValidationResultWithSuccess<Value>
+);
 
 export interface Description {
   type?: SchemaTypes | string
@@ -1419,10 +1429,14 @@ export function lazy<T> (cb: () => AbstractSchema<any, T>, options?: LazyOptions
 /** Current version of the joi package. */
 export const version: string
 
+export type ValidationCallback<
+    Schema extends SchemaLike
+> = (err: ValidationError | null, value: SchemaValue<Schema>) => void;
+
 /** Validates a value using the schema and options. */
 export function validate<Schema extends SchemaLike> (value: any, schema: Schema, options?: ValidationOptions): ValidationResult<SchemaValue<Schema>>
-export function validate<Schema extends SchemaLike> (value: any, schema: Schema, callback: (err: ValidationError, value: SchemaValue<Schema>) => void): void
-export function validate<Schema extends SchemaLike> (value: any, schema: Schema, options: ValidationOptions, callback: (err: ValidationError, value: SchemaValue<Schema>) => void): void
+export function validate<Schema extends SchemaLike> (value: any, schema: Schema, callback: ValidationCallback<Schema>): void
+export function validate<Schema extends SchemaLike> (value: any, schema: Schema, options: ValidationOptions, callback: ValidationCallback<Schema>): void
 
 /** Converts literal schema definition to joi schema object (or returns the same back if already a joi schema object). */
 export function compile<Value = any> (schema: SchemaLike): Schema<Value>
