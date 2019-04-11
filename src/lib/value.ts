@@ -173,7 +173,7 @@ export namespace Value {
 
   export type intersectionWithAugment<TValue extends AnyValue, U = never> = Value<
     /* base */ TValue['base'],
-    /* augment */ TValue['augment'] & U,
+    /* augment */ IsNever<TValue['augment'], U, TValue['augment'] & U>,
     /* allowed */ TValue['allowed'],
     /* disallowed */ TValue['disallowed'],
     /* default */ TValue['default'],

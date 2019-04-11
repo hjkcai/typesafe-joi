@@ -11,6 +11,7 @@ import { DateSchema } from './date';
 import { FunctionSchema } from './function';
 import { LazySchema } from './lazy';
 import { NumberSchema } from './number';
+import { ObjectSchema } from './object';
 import { StringSchema } from './string';
 import { SymbolSchema } from './symbol';
 
@@ -23,6 +24,7 @@ export interface SchemaCollection<TValue extends Value.AnyValue> {
   function: FunctionSchema<TValue>,
   lazy: LazySchema<TValue>,
   number: NumberSchema<TValue>,
+  object: ObjectSchema<TValue>,
   string: StringSchema<TValue>,
   symbol: SymbolSchema<TValue>
 }

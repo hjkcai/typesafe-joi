@@ -1,28 +1,25 @@
-import { OptionalSchema, RequiredSchema, SchemaType, SchemaMap, SchemaMapValue, SchemaInstance, SchemaLike, SchemaValue } from ".";
+import { Value } from "../lib/value";
+import { Schema } from "../lib/schema";
+import { ConstructorOf } from "../lib/util";
 import { AbstractSchema } from "./base";
-import { MergeObject, ConstructorOf } from "../lib/util";
 import { RenameOptions, Reference } from "../lib/joi";
-import { OPTIONAL_SCHEMA_TYPE, REQUIRED_SCHEMA_TYPE } from "../lib/symbols";
 
-export interface ObjectSchema<Value = {} | undefined> extends OptionalSchema, ObjectSchemaType<ObjectSchema, Value> {}
-export interface RequiredObjectSchema<Value = {}> extends RequiredSchema, ObjectSchemaType<RequiredObjectSchema, Value> {}
-
-export interface ObjectSchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
-  schemaType: 'object'
-  [OPTIONAL_SCHEMA_TYPE]: ObjectSchema
-  [REQUIRED_SCHEMA_TYPE]: RequiredObjectSchema
-
+export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, any>>> extends AbstractSchema<'object', TValue> {
   /**
    * Sets or extends the allowed object keys.
    */
-  keys (schemaMap?: null): SchemaType<Schema, {}>
-  keys<Map extends SchemaMap> (schemaMap: Map): SchemaType<Schema, MergeObject<Value, SchemaMapValue<Map>>>
+  keys (schemaMap?: null): ObjectSchema<Value.replaceAugment<TValue, never>>
+  keys<TSchemaMap extends Schema.SchemaMap> (schemaMap: TSchemaMap): ObjectSchema<
+    Value.deepMerge<TValue, Schema.getValue<Schema.fromSchemaLike<TSchemaMap>>>
+  >
 
   /**
    * Appends the allowed object keys. If schema is null, undefined, or {}, no changes will be applied.
    */
-  append (schemaMap?: null): SchemaType<Schema, Value>
-  append<Map extends SchemaMap> (schemaMap: Map): SchemaType<Schema, MergeObject<Value, SchemaMapValue<Map>>>
+  append (schemaMap?: null): this
+  append<TSchemaMap extends Schema.SchemaMap> (schemaMap: TSchemaMap): ObjectSchema<
+    Value.deepMerge<TValue, Schema.getValue<Schema.fromSchemaLike<TSchemaMap>>>
+  >
 
   /**
    * Requires the object to be an instance of a given constructor.
@@ -30,12 +27,12 @@ export interface ObjectSchemaType<Schema extends AbstractSchema, Value> extends 
    * @param constructor - the constructor function that the object must be an instance of.
    * @param name - an alternate name to use in validation errors. This is useful when the constructor function does not have a name.
    */
-  type<T extends ConstructorOf<any>> (constructor: T, name?: string): SchemaType<Schema, MergeObject<Value, InstanceType<T>>>
+  type<T> (constructor: ConstructorOf<T>, name?: string): ObjectSchema<Value.intersectionWithAugment<TValue, Schema.InternalSchemaMap & T>>
 
   /**
    * Requires the object to be a Joi schema instance.
    */
-  schema (): SchemaType<Schema, SchemaInstance>
+  schema (): ObjectSchema<Value.replaceAugment<TValue, AbstractSchema<any, any>>>
 
   /**
    * Specifies the minimum number of keys in the object.
@@ -58,7 +55,12 @@ export interface ObjectSchemaType<Schema extends AbstractSchema, Value> extends 
    * @param pattern - a pattern that can be either a regular expression or a joi schema that will be tested against the unknown key names
    * @param schema - the schema object matching keys must validate against
    */
-  pattern<T extends SchemaLike> (pattern: RegExp | SchemaLike, schema: T): SchemaType<Schema, MergeObject<Value, Record<string, SchemaValue<T>>>>
+  pattern<TSchemaLike extends Schema.SchemaLike> (pattern: RegExp | Schema.SchemaLike, schema: TSchemaLike): ObjectSchema<
+    Value.intersectionWithAugment<
+      TValue,
+      Schema.InternalSchemaMap & Record<any, Schema.getValueTypeFromSchemaLike<TSchemaLike>>
+    >
+  >
 
   /**
    * Defines an all-or-nothing relationship between keys where if one of the peers is present, all of them are required as well.
@@ -113,7 +115,7 @@ export interface ObjectSchemaType<Schema extends AbstractSchema, Value> extends 
   /**
    * Verifies an assertion where.
    */
-  assert (ref: string | Reference, schema: SchemaLike, message?: string): this
+  assert (ref: string | Reference, schema: Schema.SchemaLike, message?: string): this
 
   /**
    * Overrides the handling of unknown keys for the scope of the current object only (does not apply to children).
