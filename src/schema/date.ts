@@ -1,16 +1,8 @@
-import { OptionalSchema, RequiredSchema } from ".";
-import { AbstractSchema } from "./base";
+import { Value } from "../lib/value";
 import { Reference } from "../lib/joi";
-import { OPTIONAL_SCHEMA_TYPE, REQUIRED_SCHEMA_TYPE } from "../lib/symbols";
+import { AbstractSchema } from "./base";
 
-export interface DateSchema<Value = Date | undefined> extends OptionalSchema, DateSchemaType<DateSchema, Value> {}
-export interface RequiredDateSchema<Value = Date> extends RequiredSchema, DateSchemaType<RequiredDateSchema, Value> {}
-
-export interface DateSchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
-  schemaType: 'date'
-  [OPTIONAL_SCHEMA_TYPE]: DateSchema
-  [REQUIRED_SCHEMA_TYPE]: RequiredDateSchema
-
+export interface DateSchema<TValue extends Value.AnyValue = Value<Date>> extends AbstractSchema<'date', TValue> {
   /**
    * Specifies that the value must be greater than date.
    * Notes: 'now' can be passed in lieu of date so as to always compare relatively to the current date,
@@ -49,14 +41,12 @@ export interface DateSchemaType<Schema extends AbstractSchema, Value> extends Ab
    */
   format (format: string | string[]): this
 
-  /**
-   * Requires the string value to be in valid ISO 8601 date format.
-   */
+  /** Requires the string value to be in valid ISO 8601 date format. */
   iso (): this
 
   /**
    * Requires the value to be a timestamp interval from Unix Time.
-   * @param type - the type of timestamp (allowed values are unix or javascript [default])
+   * @param type - the type of timestamp (allowed values are unix or javascript (default))
    */
   timestamp (type?: 'javascript' | 'unix'): this
 }

@@ -7,12 +7,14 @@ import { AlternativesSchema } from './alternative';
 import { AnySchema } from './any';
 import { BinarySchema } from './binary';
 import { BooleanSchema } from './boolean';
+import { DateSchema } from './date';
 
 export interface SchemaCollection<TValue extends Value.AnyValue> {
   alternatives: AlternativesSchema<TValue>,
   any: AnySchema<TValue>,
   binary: BinarySchema<TValue>,
-  boolean: BooleanSchema<TValue>
+  boolean: BooleanSchema<TValue>,
+  date: DateSchema<TValue>
 }
 
 export type SchemaType<TSchemaType extends string, TValue extends Value.AnyValue> = (
