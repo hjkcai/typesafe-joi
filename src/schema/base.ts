@@ -3,8 +3,17 @@ import { Schema } from '../lib/schema'
 import { AnyType } from '../lib/util';
 import * as JoiLib from "../lib/joi";
 
-// TODO: complete SchemaType by a map
-type SchemaType<TSchemaType extends string, TValue extends Value.AnyValue> = AbstractSchema<TSchemaType, TValue>
+import { BooleanSchema } from './boolean';
+
+export interface SchemaCollection<TValue extends Value.AnyValue> {
+  boolean: BooleanSchema<TValue>
+}
+
+export type SchemaType<TSchemaType extends string, TValue extends Value.AnyValue> = (
+  TSchemaType extends keyof SchemaCollection<any>
+  ? SchemaCollection<TValue>[TSchemaType]
+  : never
+)
 
 export interface AbstractSchema<TSchemaType extends string, TValue extends Value.AnyValue> extends Schema<TValue>, JoiLib.JoiObject {
   schemaType: TSchemaType
