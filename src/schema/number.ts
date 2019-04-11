@@ -1,16 +1,8 @@
-import { OptionalSchema, RequiredSchema } from ".";
-import { AbstractSchema } from "./base";
+import { Value } from "../lib/value";
 import { Reference } from "../lib/joi";
-import { OPTIONAL_SCHEMA_TYPE, REQUIRED_SCHEMA_TYPE } from "../lib/symbols";
+import { AbstractSchema } from "./base";
 
-export interface NumberSchema<Value = number | undefined> extends OptionalSchema, NumberSchemaType<NumberSchema, Value> {}
-export interface RequiredNumberSchema<Value = number> extends RequiredSchema, NumberSchemaType<RequiredNumberSchema, Value> {}
-
-export interface NumberSchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
-  schemaType: 'number'
-  [OPTIONAL_SCHEMA_TYPE]: NumberSchema
-  [REQUIRED_SCHEMA_TYPE]: RequiredNumberSchema
-
+export interface NumberSchema<TValue extends Value.AnyValue = Value<number>> extends AbstractSchema<'number', TValue> {
   /**
    * Specifies the minimum value.
    * It can also be a reference to another field.

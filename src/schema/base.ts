@@ -10,6 +10,8 @@ import { BooleanSchema } from './boolean';
 import { DateSchema } from './date';
 import { FunctionSchema } from './function';
 import { LazySchema } from './lazy';
+import { NumberSchema } from './number';
+import { SymbolSchema } from './symbol';
 
 export interface SchemaCollection<TValue extends Value.AnyValue> {
   alternatives: AlternativesSchema<TValue>,
@@ -18,7 +20,9 @@ export interface SchemaCollection<TValue extends Value.AnyValue> {
   boolean: BooleanSchema<TValue>,
   date: DateSchema<TValue>,
   function: FunctionSchema<TValue>,
-  lazy: LazySchema<TValue>
+  lazy: LazySchema<TValue>,
+  number: NumberSchema<TValue>,
+  symbol: SymbolSchema<TValue>
 }
 
 export type SchemaType<TSchemaType extends string, TValue extends Value.AnyValue> = (
