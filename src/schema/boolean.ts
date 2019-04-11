@@ -1,15 +1,7 @@
-import { OptionalSchema, RequiredSchema } from ".";
+import { Value } from "../lib/value";
 import { AbstractSchema } from "./base";
-import { REQUIRED_SCHEMA_TYPE, OPTIONAL_SCHEMA_TYPE } from "../lib/symbols";
 
-export interface BooleanSchema<Value = boolean | undefined> extends OptionalSchema, BooleanSchemaType<BooleanSchema, Value> {}
-export interface RequiredBooleanSchema<Value = boolean> extends RequiredSchema, BooleanSchemaType<RequiredBooleanSchema, Value> {}
-
-export interface BooleanSchemaType<Schema extends AbstractSchema, Value> extends AbstractSchema<Schema, Value> {
-  schemaType: 'boolean'
-  [OPTIONAL_SCHEMA_TYPE]: BooleanSchema
-  [REQUIRED_SCHEMA_TYPE]: RequiredBooleanSchema
-
+export interface BooleanSchema<TValue extends Value.AnyValue = Value<boolean>> extends AbstractSchema<'boolean', TValue> {
   /**
    * Allows for additional values to be considered valid booleans by converting them to true during validation.
    * Accepts a value or an array of values. String comparisons are by default case insensitive,
