@@ -9,7 +9,6 @@
 export * from './lib/functions'
 export * from './lib/joi'
 export * from './lib/schema'
-export * from './lib/util'
 export * from './lib/value'
 export * from './schema'
 
