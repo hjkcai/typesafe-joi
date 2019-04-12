@@ -136,8 +136,8 @@ export interface AbstractSchema<TSchemaType extends string, TValue extends Value
   default<TDefault> (value?: TDefault, description?: string): SchemaType<TSchemaType, Value.setDefault<TValue, TDefault>>
 
   /** Converts the type into an alternatives type where the conditions are merged into the type definition where. */
-  when<T extends JoiLib.WhenIs> (ref: string | JoiLib.Reference, options: T): unknown
-  when<T extends JoiLib.When> (ref: Schema.SchemaLike, options: T): unknown
+  when<T extends JoiLib.WhenIs> (ref: string | JoiLib.Reference, options: T): UNKNOWN
+  when<T extends JoiLib.When> (ref: Schema.SchemaLike, options: T): UNKNOWN
 
   /** Overrides the key name in error messages. */
   label (name: string): this

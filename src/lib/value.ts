@@ -140,6 +140,15 @@ export namespace Value {
     /* isRequired */ TValue['isRequired']
   >
 
+  export type union<TValue extends AnyValue, U = never> = Value<
+    /* base */ TValue['base'],
+    /* augment */ TValue['augment'] | U,
+    /* allowed */ TValue['allowed'],
+    /* disallowed */ TValue['disallowed'],
+    /* default */ TValue['default'],
+    /* isRequired */ TValue['isRequired']
+  >
+
   /** Set the extra allowed type of a `Value`. */
   export type allow<TValue extends AnyValue, U = never> = Value<
     /* base */ TValue['base'],
