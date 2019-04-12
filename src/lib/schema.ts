@@ -92,14 +92,10 @@ export namespace Schema {
   )
 
   export type valueType<TSchemaLike extends SchemaLike> = (
-    fromSchemaLike<TSchemaLike> extends Schema<infer TValue>
-    ? TValue
-    : never
+    Exclude<fromSchemaLike<TSchemaLike>[typeof VALUE], undefined>
   )
 
   export type literal<TSchemaLike extends SchemaLike> = (
-    fromSchemaLike<TSchemaLike> extends Schema<infer TValue>
-    ? Value.literal<TValue>
-    : never
+    Value.literal<valueType<TSchemaLike>>
   )
 }
