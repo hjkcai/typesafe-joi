@@ -41,7 +41,7 @@ export interface AbstractSchema<TSchemaType extends string, TValue extends Value
   schemaType: TSchemaType
 
   /** Validates a value using the schema and options. */
-  validate (value: any, options?: JoiLib.ValidationOptions): JoiLib.ValidationResult<Value>
+  validate (value: any, options?: JoiLib.ValidationOptions): JoiLib.ValidationResult<Value.literal<TValue>>
   validate (value: any, callback: JoiLib.ValidationCallback<Value.literal<TValue>>): void
   validate (value: any, options: JoiLib.ValidationOptions, callback: JoiLib.ValidationCallback<Value.literal<TValue>>): void
 

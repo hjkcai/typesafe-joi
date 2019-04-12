@@ -17,6 +17,7 @@ export interface Value<
 > {
   /**
    * The base (initial) type of a schema.
+   * The base type should not be modified once the value type is created.
    *
    * @description
    * The initial type of a schema is the type when a new schema is created. For example:
@@ -85,9 +86,6 @@ export interface Value<
 }
 
 export namespace Value {
-  /** Just a placeholder */
-  type UNUSED = any
-
   export type AnyValue = Value<
     /* base */ unknown,
     /* augment */ unknown,
@@ -117,43 +115,19 @@ export namespace Value {
 
   /** Get the literal type of a `Value`. */
   export type literal<TValue extends AnyValue> = (
-    TValue extends Value<infer TBase, infer TAugment, infer TAllowed, infer TDisallowed, infer TDefault, infer TIsRequired>
-    ? Exclude<(
-        IsNever<TAugment, TBase, transformSchemaMap<TAugment>>
-        | TAllowed
-        | IsTrue<TIsRequired, never, TDefault>
-      ), TDisallowed>
-    : never
+    Exclude<(
+      // the extra allowed types
+      TValue['allowed']
+      | IsTrue<TValue['isRequired'], never, TValue['default']>
+      | IsNever<TValue['augment'], TValue['base'],
+          TValue['augment'] extends Schema.InternalSchemaMap
+          ? transformSchemaMap<TValue['augment']>
+          : TValue['augment']
+        >
+    ), TValue['disallowed']>
   )
 
-  export type replaceBase<TValue extends AnyValue, U = never> = Value<
-    /* base */ U,
-    /* augment */ TValue['augment'],
-    /* allowed */ TValue['allowed'],
-    /* disallowed */ TValue['disallowed'],
-    /* default */ TValue['default'],
-    /* isRequired */ TValue['isRequired']
-  >
-
-  export type unionWithBase<TValue extends AnyValue, U = never> = Value<
-    /* base */ TValue['base'] | U,
-    /* augment */ TValue['augment'],
-    /* allowed */ TValue['allowed'],
-    /* disallowed */ TValue['disallowed'],
-    /* default */ TValue['default'],
-    /* isRequired */ TValue['isRequired']
-  >
-
-  export type intersectionWithBase<TValue extends AnyValue, U = never> = Value<
-    /* base */ TValue['base'] & U,
-    /* augment */ TValue['augment'],
-    /* allowed */ TValue['allowed'],
-    /* disallowed */ TValue['disallowed'],
-    /* default */ TValue['default'],
-    /* isRequired */ TValue['isRequired']
-  >
-
-  export type replaceAugment<TValue extends AnyValue, U = never> = Value<
+  export type replace<TValue extends AnyValue, U = never> = Value<
     /* base */ TValue['base'],
     /* augment */ U,
     /* allowed */ TValue['allowed'],
@@ -162,7 +136,7 @@ export namespace Value {
     /* isRequired */ TValue['isRequired']
   >
 
-  export type unionWithAugment<TValue extends AnyValue, U = never> = Value<
+  export type union<TValue extends AnyValue, U = never> = Value<
     /* base */ TValue['base'],
     /* augment */ TValue['augment'] | U,
     /* allowed */ TValue['allowed'],
@@ -171,7 +145,7 @@ export namespace Value {
     /* isRequired */ TValue['isRequired']
   >
 
-  export type intersectionWithAugment<TValue extends AnyValue, U = never> = Value<
+  export type intersection<TValue extends AnyValue, U = never> = Value<
     /* base */ TValue['base'],
     /* augment */ IsNever<TValue['augment'], U, TValue['augment'] & U>,
     /* allowed */ TValue['allowed'],
@@ -181,77 +155,70 @@ export namespace Value {
   >
 
   /** Set the extra allowed type of a `Value`. */
-  export type allow<TValue extends AnyValue, TAllowed = never> = (
-    TValue extends Value<infer TBase, infer TAugment, infer TOringinalAllowed, infer TDisallowed, infer TDefault, infer TIsRequired>
-    ? (
-      Value<
-        /* base */ TBase,
-        /* augment */ TAugment,
-        /* allowed */ TOringinalAllowed | TAllowed,
-        /* disallowed */ Exclude<TDisallowed, TAllowed>,
-        /* default */ TDefault,
-        /* isRequired */ TIsRequired
-      >
-    )
-    : never
-  )
+  export type allow<TValue extends AnyValue, U = never> = Value<
+    /* base */ TValue['base'],
+    /* augment */ TValue['augment'],
+    /* allowed */ TValue['allowed'] | U,
+    /* disallowed */ Exclude<TValue['disallowed'], U>,
+    /* default */ TValue['default'],
+    /* isRequired */ TValue['isRequired']
+  >
 
-  /** Set the only allowed type of a `Value`. */
-  export type allowOnly<TValue extends AnyValue, TAllowed = never> = (
-    TValue extends Value<UNUSED, infer TAugment, infer TOringinalAllowed, infer TDisallowed, infer TDefault, infer TIsRequired>
-    ? (
-      Value<
-        /* base */ never,
-        /* augment */ TAugment,
-        /* allowed */ TOringinalAllowed | TAllowed,
-        /* disallowed */ Exclude<TDisallowed, TAllowed>,
-        /* default */ TDefault,
-        /* isRequired */ TIsRequired
-      >
-    )
-    : never
-  )
+  /**
+   * Set the only allowed type of a `Value`.
+   * `allowOnly` removes the base type and the augment type
+   */
+  export type allowOnly<TValue extends AnyValue, U = never> = Value<
+    /* base */ never,
+    /* augment */ never,
+    /* allowed */ TValue['allowed'] | U,
+    /* disallowed */ Exclude<TValue['disallowed'], U>,
+    /* default */ TValue['default'],
+    /* isRequired */ TValue['isRequired']
+  >
 
   /** Set the disallowed type of a `Value`. */
-  export type disallow<TValue extends AnyValue, TDisallowed = never> = unknown
+  export type disallow<TValue extends AnyValue, U = never> = Value<
+    /* base */ TValue['base'],
+    /* augment */ TValue['augment'],
+    /* allowed */ Exclude<TValue['allowed'], U>,
+    /* disallowed */ TValue['disallowed'] | U,
+    /* default */ TValue['default'],
+    /* isRequired */ TValue['isRequired']
+  >
 
   /** Merge two a value types by adding the rules of one type to another. */
   export type concat<T extends AnyValue, U extends AnyValue> = unknown
 
   /** Set the default type of a `Value`. */
-  export type setDefault<TValue extends AnyValue, TDefault = never> = unknown
+  export type setDefault<TValue extends AnyValue, U = never> = Value<
+    /* base */ TValue['base'],
+    /* augment */ TValue['augment'],
+    /* allowed */ TValue['allowed'],
+    /* disallowed */ TValue['disallowed'],
+    /* default */ U,
+    /* isRequired */ TValue['isRequired']
+  >
 
   /** Make a `Value` required. */
-  export type required<TValue extends AnyValue> = (
-    TValue extends Value<infer TBase, infer TAugment, infer TAllowed, infer TDisallowed, infer TDefault, UNUSED>
-    ? (
-      Value<
-        /* base */ TBase,
-        /* augment */ TAugment,
-        /* allowed */ TAllowed,
-        /* disallowed */ TDisallowed,
-        /* default */ TDefault,
-        /* isRequired */ true
-      >
-    )
-    : never
-  )
+  export type required<TValue extends AnyValue> = Value<
+    /* base */ TValue['base'],
+    /* augment */ TValue['augment'],
+    /* allowed */ TValue['allowed'],
+    /* disallowed */ TValue['disallowed'],
+    /* default */ TValue['default'],
+    /* isRequired */ true
+  >
 
   /** Make a `Value` optional (not required). */
-  export type optional<TValue extends AnyValue> = (
-    TValue extends Value<infer TBase, infer TAugment, infer TAllowed, infer TDisallowed, infer TDefault, UNUSED>
-    ? (
-      Value<
-        /* base */ TBase,
-        /* augment */ TAugment,
-        /* allowed */ TAllowed,
-        /* disallowed */ TDisallowed,
-        /* default */ TDefault,
-        /* isRequired */ false
-      >
-    )
-    : never
-  )
+  export type optional<TValue extends AnyValue> = Value<
+    /* base */ TValue['base'],
+    /* augment */ TValue['augment'],
+    /* allowed */ TValue['allowed'],
+    /* disallowed */ TValue['disallowed'],
+    /* default */ TValue['default'],
+    /* isRequired */ false
+  >
 
   export type mergeArray<TValue extends AnyValue, T = never> = unknown
 
@@ -259,26 +226,22 @@ export namespace Value {
 
   /** Deeply merge two values with `InternalSchemaMap` types. */
   export type deepMerge<T extends AnyValue, U extends AnyValue> = (
-    T extends Value<infer TBase, infer TOriginalAugment, infer TAllowed, infer TDisallowed, infer TDefault, infer TIsRequired>
-    ? U extends Value<UNUSED, infer TAugment, UNUSED, UNUSED, UNUSED, UNUSED>
-      ? IsNever<TOriginalAugment, 0, TOriginalAugment> extends Schema.InternalSchemaMap
-        ? IsNever<TAugment, 0, TAugment> extends Schema.InternalSchemaMap
-          ? (
-            Value<
-              /* base */ TBase,
-              /* augment */ Schema.deepMergeSchemaMap<
-                Extract<TOriginalAugment, Schema.InternalSchemaMap>,
-                Extract<TAugment, Schema.InternalSchemaMap>
-              >,
-              /* allowed */ TAllowed,
-              /* disallowed */ TDisallowed,
-              /* default */ TDefault,
-              /* isRequired */ TIsRequired
-            >
-          )
-          : U
+    IsNever<T['augment'], 0, T['augment']> extends Schema.InternalSchemaMap
+      ? IsNever<U['augment'], 0, U['augment']> extends Schema.InternalSchemaMap
+        ? (
+          Value<
+            /* base */ T['base'],
+            /* augment */ Schema.deepMergeSchemaMap<
+              Extract<T['augment'], Schema.InternalSchemaMap>,
+              Extract<U['augment'], Schema.InternalSchemaMap>
+            >,
+            /* allowed */ T['allowed'],
+            /* disallowed */ T['disallowed'],
+            /* default */ T['default'],
+            /* isRequired */ T['isRequired']
+          >
+        )
         : U
-      : T
-    : never
+      : U
   )
 }

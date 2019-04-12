@@ -8,7 +8,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
   /**
    * Sets or extends the allowed object keys.
    */
-  keys (schemaMap?: null): ObjectSchema<Value.replaceAugment<TValue, never>>
+  keys (schemaMap?: null): ObjectSchema<Value.replace<TValue, never>>
   keys<TSchemaMap extends Schema.SchemaMap> (schemaMap: TSchemaMap): ObjectSchema<
     Value.deepMerge<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaMap>>>
   >
@@ -27,12 +27,12 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    * @param constructor - the constructor function that the object must be an instance of.
    * @param name - an alternate name to use in validation errors. This is useful when the constructor function does not have a name.
    */
-  type<T> (constructor: ConstructorOf<T>, name?: string): ObjectSchema<Value.intersectionWithAugment<TValue, Schema.InternalSchemaMap & T>>
+  type<T> (constructor: ConstructorOf<T>, name?: string): ObjectSchema<Value.intersection<TValue, Schema.InternalSchemaMap & T>>
 
   /**
    * Requires the object to be a Joi schema instance.
    */
-  schema (): ObjectSchema<Value.replaceAugment<TValue, AbstractSchema<any, any>>>
+  schema (): ObjectSchema<Value.replace<TValue, AbstractSchema<any, any>>>
 
   /**
    * Specifies the minimum number of keys in the object.
@@ -56,7 +56,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    * @param schema - the schema object matching keys must validate against
    */
   pattern<TSchemaLike extends Schema.SchemaLike> (pattern: RegExp | Schema.SchemaLike, schema: TSchemaLike): ObjectSchema<
-    Value.intersectionWithAugment<
+    Value.intersection<
       TValue,
       Schema.InternalSchemaMap & Record<any, Schema.literal<TSchemaLike>>
     >
