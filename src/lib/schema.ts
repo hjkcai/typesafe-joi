@@ -91,19 +91,15 @@ export namespace Schema {
     }
   )
 
-  export type getValue<TSchema extends Schema<Value.AnyValue>> = (
-    TSchema extends Schema<infer TValue>
+  export type valueType<TSchemaLike extends SchemaLike> = (
+    fromSchemaLike<TSchemaLike> extends Schema<infer TValue>
     ? TValue
     : never
   )
 
-  export type getValueFromSchemaLike<TSchemaLike extends SchemaLike> = getValue<fromSchemaLike<TSchemaLike>>
-
-  export type getValueType<TSchema extends Schema<Value.AnyValue>> = (
-    TSchema extends Schema<infer TValue>
-    ? Value.getType<TValue>
+  export type literal<TSchemaLike extends SchemaLike> = (
+    fromSchemaLike<TSchemaLike> extends Schema<infer TValue>
+    ? Value.literal<TValue>
     : never
   )
-
-  export type getValueTypeFromSchemaLike<TSchemaLike extends SchemaLike> = getValueType<fromSchemaLike<TSchemaLike>>
 }

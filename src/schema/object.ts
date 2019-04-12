@@ -10,7 +10,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    */
   keys (schemaMap?: null): ObjectSchema<Value.replaceAugment<TValue, never>>
   keys<TSchemaMap extends Schema.SchemaMap> (schemaMap: TSchemaMap): ObjectSchema<
-    Value.deepMerge<TValue, Schema.getValue<Schema.fromSchemaLike<TSchemaMap>>>
+    Value.deepMerge<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaMap>>>
   >
 
   /**
@@ -18,7 +18,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    */
   append (schemaMap?: null): this
   append<TSchemaMap extends Schema.SchemaMap> (schemaMap: TSchemaMap): ObjectSchema<
-    Value.deepMerge<TValue, Schema.getValue<Schema.fromSchemaLike<TSchemaMap>>>
+    Value.deepMerge<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaMap>>>
   >
 
   /**
@@ -58,7 +58,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
   pattern<TSchemaLike extends Schema.SchemaLike> (pattern: RegExp | Schema.SchemaLike, schema: TSchemaLike): ObjectSchema<
     Value.intersectionWithAugment<
       TValue,
-      Schema.InternalSchemaMap & Record<any, Schema.getValueTypeFromSchemaLike<TSchemaLike>>
+      Schema.InternalSchemaMap & Record<any, Schema.literal<TSchemaLike>>
     >
   >
 

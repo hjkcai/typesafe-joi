@@ -28,25 +28,25 @@ export declare function number (): Schemas.NumberSchema
 
 /** Generates a schema object that matches an object data type (as well as JSON strings that have been parsed into objects). */
 export declare function object (): Schemas.ObjectSchema
-export declare function object<TSchemaMap extends Schema.SchemaMap = {}> (schema: TSchemaMap): Schemas.ObjectSchema<Schema.getValueFromSchemaLike<TSchemaMap>>
+export declare function object<TSchemaMap extends Schema.SchemaMap = {}> (schema: TSchemaMap): Schemas.ObjectSchema<Schema.valueType<TSchemaMap>>
 
 /** Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with allow(''). */
 export declare function string (): Schemas.StringSchema
 
 /** Generates a type that will match one of the provided alternative schemas */
-export declare function alternatives<T extends Schema.SchemaLike[]> (types: T): Schemas.AlternativesSchema<Schema.getValueFromSchemaLike<T[number]>>
-export declare function alternatives<T extends Schema.SchemaLike[]> (...types: T): Schemas.AlternativesSchema<Schema.getValueFromSchemaLike<T[number]>>
+export declare function alternatives<T extends Schema.SchemaLike[]> (types: T): Schemas.AlternativesSchema<Schema.valueType<T[number]>>
+export declare function alternatives<T extends Schema.SchemaLike[]> (...types: T): Schemas.AlternativesSchema<Schema.valueType<T[number]>>
 
 /** Generates a type that will match one of the provided alternative schemas */
-export declare function alt<T extends Schema.SchemaLike[]> (types: T): Schemas.AlternativesSchema<Schema.getValueFromSchemaLike<T[number]>>
-export declare function alt<T extends Schema.SchemaLike[]> (...types: T): Schemas.AlternativesSchema<Schema.getValueFromSchemaLike<T[number]>>
+export declare function alt<T extends Schema.SchemaLike[]> (types: T): Schemas.AlternativesSchema<Schema.valueType<T[number]>>
+export declare function alt<T extends Schema.SchemaLike[]> (...types: T): Schemas.AlternativesSchema<Schema.valueType<T[number]>>
 
 /**
  * Generates a placeholder schema for a schema that you would provide with the fn.
  * Supports the same methods of the any() type.
  * This is mostly useful for recursive schemas
  */
-export declare function lazy<TSchema extends Schema.SchemaLike> (cb: () => TSchema, options?: JoiLib.LazyOptions): Schemas.LazySchema<Schema.getValueFromSchemaLike<TSchema>>
+export declare function lazy<TSchema extends Schema.SchemaLike> (cb: () => TSchema, options?: JoiLib.LazyOptions): Schemas.LazySchema<Schema.valueType<TSchema>>
 
 // ----------------------------------------------------------------------------
 // Other joi exports
@@ -56,9 +56,9 @@ export declare function lazy<TSchema extends Schema.SchemaLike> (cb: () => TSche
 export declare const version: string
 
 /** Validates a value using the schema and options. */
-export declare function validate<TSchemaLike extends Schema.SchemaLike> (value: any, schema: TSchemaLike, options?: JoiLib.ValidationOptions): JoiLib.ValidationResult<Schema.getValueTypeFromSchemaLike<TSchemaLike>>
-export declare function validate<TSchemaLike extends Schema.SchemaLike> (value: any, schema: TSchemaLike, callback: JoiLib.ValidationCallback<Schema.getValueTypeFromSchemaLike<TSchemaLike>>): void
-export declare function validate<TSchemaLike extends Schema.SchemaLike> (value: any, schema: TSchemaLike, options: JoiLib.ValidationOptions, callback: JoiLib.ValidationCallback<Schema.getValueTypeFromSchemaLike<TSchemaLike>>): void
+export declare function validate<TSchemaLike extends Schema.SchemaLike> (value: any, schema: TSchemaLike, options?: JoiLib.ValidationOptions): JoiLib.ValidationResult<Schema.literal<TSchemaLike>>
+export declare function validate<TSchemaLike extends Schema.SchemaLike> (value: any, schema: TSchemaLike, callback: JoiLib.ValidationCallback<Schema.literal<TSchemaLike>>): void
+export declare function validate<TSchemaLike extends Schema.SchemaLike> (value: any, schema: TSchemaLike, options: JoiLib.ValidationOptions, callback: JoiLib.ValidationCallback<Schema.literal<TSchemaLike>>): void
 
 /** Converts literal schema definition to joi schema object (or returns the same back if already a joi schema object). */
 export declare function compile<TSchemaLike extends Schema.SchemaLike> (schema: TSchemaLike): Schema.compile<TSchemaLike>
@@ -79,7 +79,7 @@ export declare function assert (value: any, schema: Schema.SchemaLike, message?:
  * @param schema - the schema object.
  * @param message - optional message string prefix added in front of the error message. may also be an Error object.
  */
-export declare function attempt<TSchemaLike extends Schema.SchemaLike> (value: any, schema: TSchemaLike, message?: string | Error): Schema.getValueTypeFromSchemaLike<TSchemaLike>
+export declare function attempt<TSchemaLike extends Schema.SchemaLike> (value: any, schema: TSchemaLike, message?: string | Error): Schema.literal<TSchemaLike>
 
 /**
  * Generates a reference to the value of the named key.

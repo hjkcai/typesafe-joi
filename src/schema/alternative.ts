@@ -6,7 +6,7 @@ export interface AlternativesSchema<TValue extends Value.AnyValue = Value<never>
   try<TSchemaLike extends Schema.SchemaLike[]> (...types: TSchemaLike): AlternativesSchema<
     Value.unionWithBase<
       TValue,
-      Schema.getValueTypeFromSchemaLike<TSchemaLike[number]>
+      Schema.literal<TSchemaLike[number]>
     >
   >
 }

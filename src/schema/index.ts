@@ -42,8 +42,8 @@ export interface AbstractSchema<TSchemaType extends string, TValue extends Value
 
   /** Validates a value using the schema and options. */
   validate (value: any, options?: JoiLib.ValidationOptions): JoiLib.ValidationResult<Value>
-  validate (value: any, callback: JoiLib.ValidationCallback<Value.getType<TValue>>): void
-  validate (value: any, options: JoiLib.ValidationOptions, callback: JoiLib.ValidationCallback<Value.getType<TValue>>): void
+  validate (value: any, callback: JoiLib.ValidationCallback<Value.literal<TValue>>): void
+  validate (value: any, options: JoiLib.ValidationOptions, callback: JoiLib.ValidationCallback<Value.literal<TValue>>): void
 
   /** Whitelists a value */
   allow<T extends AnyType[]> (values: T): SchemaType<TSchemaType, Value.allow<TValue, T[number]>>
@@ -74,7 +74,7 @@ export interface AbstractSchema<TSchemaType extends string, TValue extends Value
   not<T extends AnyType[]> (...values: T): SchemaType<TSchemaType, Value.disallow<TValue, T[number]>>
 
   /** Returns a new type that is the result of adding the rules of one type to another. */
-  concat<TSchemaLike extends Schema.SchemaLike> (schema: TSchemaLike): SchemaType<TSchemaType, Value.concat<TValue, Schema.getValue<Schema.fromSchemaLike<TSchemaLike>>>>
+  concat<TSchemaLike extends Schema.SchemaLike> (schema: TSchemaLike): SchemaType<TSchemaType, Value.concat<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaLike>>>>
 
   /** Marks a key as required which will not allow undefined as value. All keys are optional by default. */
   required (): SchemaType<TSchemaType, Value.required<TValue>>

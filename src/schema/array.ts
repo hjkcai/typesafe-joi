@@ -16,8 +16,8 @@ export interface ArraySchema<TValue extends Value.AnyValue = Value<any>> extends
    *
    * @param type - a joi schema object to validate each array item against.
    */
-  items<T extends Schema.SchemaLike[]> (types: T): ArraySchema<Value.mergeArray<TValue, Schema.getValueTypeFromSchemaLike<T[number]>>>
-  items<T extends Schema.SchemaLike[]> (...types: T): ArraySchema<Value.mergeArray<TValue, Schema.getValueTypeFromSchemaLike<T[number]>>>
+  items<T extends Schema.SchemaLike[]> (types: T): ArraySchema<Value.mergeArray<TValue, Schema.literal<T[number]>>>
+  items<T extends Schema.SchemaLike[]> (...types: T): ArraySchema<Value.mergeArray<TValue, Schema.literal<T[number]>>>
 
   /**
    * Lists the types in sequence order for the array values where:
@@ -26,8 +26,8 @@ export interface ArraySchema<TValue extends Value.AnyValue = Value<any>> extends
    * Errors will contain the number of items that didn't match.
    * Any unmatched item having a label will be mentioned explicitly.
    */
-  ordered<T extends Schema.SchemaLike[]> (types: T): ArraySchema<Value.mergeArray<TValue, Schema.getValueTypeFromSchemaLike<T[number]>>>
-  ordered<T extends Schema.SchemaLike[]> (...types: T): ArraySchema<Value.mergeArray<TValue, Schema.getValueTypeFromSchemaLike<T[number]>>>
+  ordered<T extends Schema.SchemaLike[]> (types: T): ArraySchema<Value.mergeArray<TValue, Schema.literal<T[number]>>>
+  ordered<T extends Schema.SchemaLike[]> (...types: T): ArraySchema<Value.mergeArray<TValue, Schema.literal<T[number]>>>
 
   /**
    * Allow this array to be sparse.

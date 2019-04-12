@@ -110,13 +110,13 @@ export namespace Value {
   export type transformSchemaMap<T extends Schema.InternalSchemaMap> = MakeOptional<{
     [Key in Exclude<keyof T, typeof IS_INTERNAL_SCHEMA_MAP>]: (
       T[Key] extends Schema<infer TValue>
-      ? Value.getType<TValue>
+      ? Value.literal<TValue>
       : never
     )
   }>
 
   /** Get the literal type of a `Value`. */
-  export type getType<TValue extends AnyValue> = (
+  export type literal<TValue extends AnyValue> = (
     TValue extends Value<infer TBase, infer TAugment, infer TAllowed, infer TDisallowed, infer TDefault, infer TIsRequired>
     ? Exclude<(
         IsNever<TAugment, TBase, transformSchemaMap<TAugment>>
