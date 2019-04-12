@@ -71,6 +71,8 @@ export namespace Schema {
     [Key in keyof TSchemaMap]: fromSchemaLike<TSchemaMap[Key]>
   }
 
+  export type compile<TSchemaLike extends SchemaLike> = unknown
+
   export type deepMergeSchemaMap<T extends InternalSchemaMap, U extends InternalSchemaMap> = (
     InternalSchemaMap
     & {
@@ -94,6 +96,8 @@ export namespace Schema {
     ? TValue
     : never
   )
+
+  export type getValueFromSchemaLike<TSchemaLike extends SchemaLike> = getValue<fromSchemaLike<TSchemaLike>>
 
   export type getValueType<TSchema extends Schema<Value.AnyValue>> = (
     TSchema extends Schema<infer TValue>
