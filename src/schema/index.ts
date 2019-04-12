@@ -174,3 +174,18 @@ export interface AbstractSchema<TSchemaType extends string, TValue extends Value
   /** Returns a plain object representing the schema's rules and properties. */
   describe (): JoiLib.Description
 }
+
+export {
+  AlternativesSchema,
+  AnySchema,
+  ArraySchema,
+  BinarySchema,
+  BooleanSchema,
+  DateSchema,
+  FunctionSchema,
+  LazySchema,
+  NumberSchema,
+  ObjectSchema,
+  StringSchema,
+  SymbolSchema
+}
