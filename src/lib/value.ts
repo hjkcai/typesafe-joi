@@ -1,6 +1,6 @@
 import { Schema } from './schema'
 import { IS_INTERNAL_SCHEMA_MAP } from "./symbols";
-import { MakeOptional, IsNever, IsTrue } from './util';
+import { MakeOptional, IsNever, IsTrue, MergeArray, ExcludeFromArray } from './util';
 
 /**
  * A structure stores all information needed to match Joi's validation logic.
@@ -104,6 +104,10 @@ export namespace Value {
     /* isRequired */ true
   >
 
+  export type isAllowOnly<TValue extends AnyValue, TrueType = true, FalseType = false> = (
+    IsNever<TValue['base'], IsNever<TValue['augment'], TrueType, FalseType>, FalseType>
+  )
+
   /** Transform a schema map into object literal type. */
   export type transformSchemaMap<T extends Schema.InternalSchemaMap> = MakeOptional<{
     [Key in Exclude<keyof T, typeof IS_INTERNAL_SCHEMA_MAP>]: (
@@ -129,25 +133,7 @@ export namespace Value {
 
   export type replace<TValue extends AnyValue, U = never> = Value<
     /* base */ TValue['base'],
-    /* augment */ U,
-    /* allowed */ TValue['allowed'],
-    /* disallowed */ TValue['disallowed'],
-    /* default */ TValue['default'],
-    /* isRequired */ TValue['isRequired']
-  >
-
-  export type union<TValue extends AnyValue, U = never> = Value<
-    /* base */ TValue['base'],
-    /* augment */ TValue['augment'] | U,
-    /* allowed */ TValue['allowed'],
-    /* disallowed */ TValue['disallowed'],
-    /* default */ TValue['default'],
-    /* isRequired */ TValue['isRequired']
-  >
-
-  export type intersection<TValue extends AnyValue, U = never> = Value<
-    /* base */ TValue['base'],
-    /* augment */ IsNever<TValue['augment'], U, TValue['augment'] & U>,
+    /* augment */ isAllowOnly<TValue, never, U>,
     /* allowed */ TValue['allowed'],
     /* disallowed */ TValue['disallowed'],
     /* default */ TValue['default'],
@@ -187,9 +173,6 @@ export namespace Value {
     /* isRequired */ TValue['isRequired']
   >
 
-  /** Merge two a value types by adding the rules of one type to another. */
-  export type concat<T extends AnyValue, U extends AnyValue> = unknown
-
   /** Set the default type of a `Value`. */
   export type setDefault<TValue extends AnyValue, U = never> = Value<
     /* base */ TValue['base'],
@@ -220,28 +203,30 @@ export namespace Value {
     /* isRequired */ false
   >
 
-  export type mergeArray<TValue extends AnyValue, T = never> = unknown
+  /** Merge two a value types by adding the rules of one type to another. */
+  export type concat<T extends AnyValue, U extends AnyValue> = unknown
 
-  export type excludeFromArray<TValue extends AnyValue, T = never> = unknown
+  export type mergeArray<TValue extends AnyValue, T = never> = replace<TValue, MergeArray<TValue['augment'], T>>
+
+  export type excludeFromArray<TValue extends AnyValue, T = never> = replace<TValue, ExcludeFromArray<TValue['augment'], T>>
 
   /** Deeply merge two values with `InternalSchemaMap` types. */
-  export type deepMerge<T extends AnyValue, U extends AnyValue> = (
+  export type deepMergeSchemaMap<T extends AnyValue, U extends AnyValue> = (
     IsNever<T['augment'], 0, T['augment']> extends Schema.InternalSchemaMap
       ? IsNever<U['augment'], 0, U['augment']> extends Schema.InternalSchemaMap
         ? (
-          Value<
-            /* base */ T['base'],
-            /* augment */ Schema.deepMergeSchemaMap<
+          replace<T,
+            Schema.deepMergeSchemaMap<
               Extract<T['augment'], Schema.InternalSchemaMap>,
               Extract<U['augment'], Schema.InternalSchemaMap>
-            >,
-            /* allowed */ T['allowed'],
-            /* disallowed */ T['disallowed'],
-            /* default */ T['default'],
-            /* isRequired */ T['isRequired']
+            >
           >
         )
         : U
       : U
+  )
+
+  export type appendSchemaMap<TValue extends AnyValue, U> = (
+    replace<TValue, IsNever<TValue['augment'], Schema.InternalSchemaMap & U, TValue['augment'] & Schema.InternalSchemaMap & U>>
   )
 }

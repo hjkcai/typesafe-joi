@@ -80,7 +80,7 @@ export namespace Schema {
         Key extends keyof U
         ? T[Key] extends Schema<infer TValue>
           ? U[Key] extends Schema<infer UValue>
-            ? Schema<Value.deepMerge<TValue, UValue>>  // TODO: Preserve the original schema type from T[Key]
+            ? Schema<Value.deepMergeSchemaMap<TValue, UValue>>  // TODO: Preserve the original schema type from T[Key]
             : U[Key]
           : U[Key]
         : T[Key]

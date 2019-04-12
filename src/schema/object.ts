@@ -10,7 +10,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    */
   keys (schemaMap?: null): ObjectSchema<Value.replace<TValue, never>>
   keys<TSchemaMap extends Schema.SchemaMap> (schemaMap: TSchemaMap): ObjectSchema<
-    Value.deepMerge<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaMap>>>
+    Value.deepMergeSchemaMap<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaMap>>>
   >
 
   /**
@@ -18,7 +18,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    */
   append (schemaMap?: null): this
   append<TSchemaMap extends Schema.SchemaMap> (schemaMap: TSchemaMap): ObjectSchema<
-    Value.deepMerge<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaMap>>>
+    Value.deepMergeSchemaMap<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaMap>>>
   >
 
   /**
@@ -27,7 +27,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    * @param constructor - the constructor function that the object must be an instance of.
    * @param name - an alternate name to use in validation errors. This is useful when the constructor function does not have a name.
    */
-  type<T> (constructor: ConstructorOf<T>, name?: string): ObjectSchema<Value.intersection<TValue, Schema.InternalSchemaMap & T>>
+  type<T> (constructor: ConstructorOf<T>, name?: string): ObjectSchema<Value.appendSchemaMap<TValue, T>>
 
   /**
    * Requires the object to be a Joi schema instance.
@@ -56,10 +56,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    * @param schema - the schema object matching keys must validate against
    */
   pattern<TSchemaLike extends Schema.SchemaLike> (pattern: RegExp | Schema.SchemaLike, schema: TSchemaLike): ObjectSchema<
-    Value.intersection<
-      TValue,
-      Schema.InternalSchemaMap & Record<any, Schema.literal<TSchemaLike>>
-    >
+    Value.appendSchemaMap<TValue, Record<any, Schema.literal<TSchemaLike>>>
   >
 
   /**

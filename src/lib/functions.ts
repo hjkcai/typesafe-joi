@@ -120,3 +120,5 @@ export declare function defaults (fn: DefaultsFunction): Root
  * where all the functions relying on `this` are bound to the Joi instance.
  */
 export declare function bind (): Root
+
+const a = object({ a: number() }).validate(0).value
