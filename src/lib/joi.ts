@@ -1,6 +1,7 @@
 import * as Joi from 'joi'
-import { ObjectSchema } from '../schema/object';
-import { Schema, SchemaLike } from '../schema';
+import { Value } from './value';
+import { Schema } from './schema';
+import { ObjectSchema, AbstractSchema } from '../schema';
 
 export {
   LanguageOptions,
@@ -38,7 +39,7 @@ export interface ValidationResult<T> extends Pick<Promise<T>, 'then' | 'catch'> 
 
 export type ValidationCallback<T> = (err: Joi.ValidationError, value: T) => void
 
-export type ExtensionBoundSchema = Schema & {
+export interface ExtensionBoundSchema<TValue extends Value.AnyValue = Value.AnyValue> extends AbstractSchema<string, TValue> {
   /**
    * Creates a joi error object.
    * Used in conjunction with custom rules.
@@ -52,17 +53,17 @@ export type ExtensionBoundSchema = Schema & {
 
 export interface Rules<P extends object = any> {
   name: string
-  params?: ObjectSchema | {[key in keyof P]: SchemaLike; }
-  setup? (this: ExtensionBoundSchema, params: P): Schema | void
+  params?: ObjectSchema | {[key in keyof P]: Schema.SchemaLike; }
+  setup? (this: ExtensionBoundSchema, params: P): AbstractSchema<any, any> | void
   validate? (this: ExtensionBoundSchema, params: P, value: any, state: Joi.State, options: Joi.ValidationOptions): any
   description?: string | ((params: P) => string)
 }
 
-export interface When<Then extends SchemaLike = never, Otherwise extends SchemaLike = never> {
+export interface When<Then extends Schema.SchemaLike = never, Otherwise extends Schema.SchemaLike = never> {
   then?: Then,
   otherwise?: Otherwise
 }
 
-export interface WhenIs<Then extends SchemaLike = never, Otherwise extends SchemaLike = never> extends When<Then, Otherwise> {
-  is: SchemaLike
+export interface WhenIs<Then extends Schema.SchemaLike = never, Otherwise extends Schema.SchemaLike = never> extends When<Then, Otherwise> {
+  is: Schema.SchemaLike
 }
