@@ -1,5 +1,6 @@
 import * as JoiLib from './joi'
 import * as Schemas from '../schema'
+import { Value } from './value';
 import { Schema } from './schema';
 
 /** Generates a schema object that matches any data type. */
@@ -95,7 +96,8 @@ export declare function isRef (ref: any): ref is JoiLib.Reference
  * Get a sub-schema of an existing schema based on a `path` that can be either a string or an array
  * of strings For string values path separator is a dot (`.`)
  */
-export declare function reach (schema: Schemas.ObjectSchema, path: string | string[]): unknown // TODO: fill this type
+export declare function reach<TShcemaMap extends Schema.InternalSchemaMap, TSubSchemaKey extends keyof TShcemaMap> (schema: Schemas.ObjectSchema<Value<Record<any, any>, TShcemaMap>>, path: TSubSchemaKey | [TSubSchemaKey]): TShcemaMap[TSubSchemaKey]
+export declare function reach (schema: Schemas.AbstractSchema<any, any>, path: string | string[]): Schemas.AbstractSchema<any, any> | undefined
 
 /**
  * Creates a new Joi instance customized with the extension(s) you provide included.
@@ -120,5 +122,3 @@ export declare function defaults (fn: DefaultsFunction): Root
  * where all the functions relying on `this` are bound to the Joi instance.
  */
 export declare function bind (): Root
-
-const a = object({ a: number() }).validate(0).value
