@@ -1,3 +1,4 @@
+import * as Schemas from '../schema'
 import { Value } from "./value";
 import { IS_INTERNAL_SCHEMA_MAP, IS_INTERNAL_LITERAL_SCHEMA, VALUE } from "./symbols";
 
@@ -71,7 +72,32 @@ export namespace Schema {
     [Key in keyof TSchemaMap]: fromSchemaLike<TSchemaMap[Key]>
   }
 
-  export type compile<TSchemaLike extends SchemaLike> = unknown
+  /**
+   * Construct a `Schema` type from a `SchemaLike`.
+   * This is almost the same to `fromSchemaLike` but it returns the corresponding schema type.
+   */
+  export type compile<TSchemaLike extends SchemaLike> = (
+    TSchemaLike extends Schema<Value.AnyValue>
+    ? TSchemaLike
+    : TSchemaLike extends string
+        ? Schemas.StringSchema<Value<TSchemaLike>>
+        : TSchemaLike extends number
+          ? Schemas.NumberSchema<Value<TSchemaLike>>
+          : TSchemaLike extends boolean
+            ? Schemas.BooleanSchema<Value<TSchemaLike>>
+            : TSchemaLike extends any[]
+              ? never // fromSchemaLike[TSchemaLike[number]]
+              : TSchemaLike extends SchemaMap
+                ? TSchemaLike & LiteralSchema<Value<Record<any, any>, compileSchemaMap<Extract<TSchemaLike, SchemaMap>>>>
+                : Schemas.AnySchema<Value<TSchemaLike>>
+  )
+
+  /**
+   * Construct an internal `InternalSchemaMap` from a `SchemaMap`.
+   */
+  export type compileSchemaMap<TSchemaMap extends SchemaMap> = InternalSchemaMap & {
+    [Key in keyof TSchemaMap]: compile<TSchemaMap[Key]>
+  }
 
   export type deepMergeSchemaMap<T extends InternalSchemaMap, U extends InternalSchemaMap> = (
     InternalSchemaMap
