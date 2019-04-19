@@ -202,6 +202,8 @@ interface AbstractSchema<Schema extends AbstractSchema<any, any> = any, Value = 
   schemaType: string
   [VALUE]: Value
 
+  bind(): this;
+
   /** Validates a value using the schema and options. */
   validate (value: any, options?: ValidationOptions): ValidationResult<Value>
   validate (value: any, callback: AbstractSchemaValidationCallback<Value>): void
