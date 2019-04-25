@@ -19,7 +19,8 @@ export namespace Schema {
   export type AnySchema = Schema<Value.AnyValue>
 
   export type SchemaMap = { [Key in keyof any]: SchemaLike }
-  export type SchemaLike = string | number | boolean | null | Schema<Value.AnyValue> | Schema<Value.AnyValue>[] | SchemaMap
+  export type SchemaLikeBase = string | number | boolean | null | Schema<Value.AnyValue> | SchemaMap
+  export type SchemaLike = SchemaLikeBase | SchemaLikeBase[]
 
   /**
    * The nominal type to mark a plain object as an *internal* schema map.
@@ -61,7 +62,7 @@ export namespace Schema {
     : TSchemaLike extends string | number | boolean | null
       ? TSchemaLike & LiteralSchema<Value<TSchemaLike>>
       : TSchemaLike extends any[]
-        ? never // fromSchemaLike[TSchemaLike[number]]
+        ? never // TODO: literal alternative schema is not supported yet
         : TSchemaLike & LiteralSchema<Value<Record<any, any>, fromSchemaMap<Extract<TSchemaLike, SchemaMap>>>>
   )
 
@@ -86,7 +87,7 @@ export namespace Schema {
           : TSchemaLike extends boolean
             ? Schemas.BooleanSchema<Value<TSchemaLike>>
             : TSchemaLike extends any[]
-              ? never // fromSchemaLike[TSchemaLike[number]]
+              ? never // TODO: literal alternative schema is not supported yet
               : TSchemaLike extends SchemaMap
                 ? TSchemaLike & LiteralSchema<Value<Record<any, any>, compileSchemaMap<Extract<TSchemaLike, SchemaMap>>>>
                 : Schemas.AnySchema<Value<TSchemaLike>>
