@@ -12,7 +12,7 @@ export interface Schema<TValue extends Value.AnyValue> {
    * The value type of the schema.
    * @private DO NOT USE! This is not a real joi schema property but is required for typesafe-joi to work.
    */
-  [VALUE]?: TValue
+  [VALUE]: TValue
 }
 
 export namespace Schema {
@@ -34,7 +34,7 @@ export namespace Schema {
    * type A = InternalSchemaMap & { a: NumberSchema }
    */
   export interface InternalSchemaMap {
-    [IS_INTERNAL_SCHEMA_MAP]?: never
+    [IS_INTERNAL_SCHEMA_MAP]: true
   }
 
   /**
@@ -50,7 +50,7 @@ export namespace Schema {
    * type A = LiteralSchema<Value<1 | "2" | true>> & (1 | "2" | true)
    */
   export interface LiteralSchema<TValue extends Value.AnyValue> extends Schema<TValue> {
-    [IS_INTERNAL_LITERAL_SCHEMA]?: never
+    [IS_INTERNAL_LITERAL_SCHEMA]: true
   }
 
   /**
