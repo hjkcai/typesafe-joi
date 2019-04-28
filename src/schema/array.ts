@@ -4,7 +4,7 @@ import { Reference } from "../lib/joi";
 import { ArrayItemType } from "../lib/util";
 import { AbstractSchema } from ".";
 
-export interface ArraySchema<TValue extends Value.AnyValue = Value<any>> extends AbstractSchema<'array', TValue> {
+export interface ArraySchema<TValue extends Value.AnyValue = Value<any[]>> extends AbstractSchema<'array', TValue> {
   /**
    * List the types allowed for the array values.
    * type can be an array of values, or multiple values can be passed as individual arguments.
