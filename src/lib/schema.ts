@@ -1,6 +1,6 @@
 import * as Schemas from '../schema'
 import { Value } from "./value";
-import { IS_INTERNAL_SCHEMA_MAP, IS_INTERNAL_LITERAL_SCHEMA, VALUE } from "./symbols";
+import { IS_INTERNAL_SCHEMA_MAP, IS_SPARSE, IS_INTERNAL_LITERAL_SCHEMA, VALUE } from "./symbols";
 
 /**
  * The abstract schema interface.
@@ -27,14 +27,29 @@ export namespace Schema {
    * @private Internal use only.
    *
    * @description
-   * `InternalSchemaMap` ensures all its keys have the value type `Schema<Value.AnyValue>`.
-   * Equivalent to `{ [IS_SCHEMA_MAP]?: never } & Record<any, Schema<Value.AnyValue>>`.
+   * Types intersect with `InternalSchemaMap` ensures all its keys have the value type `Schema<Value.AnyValue>`.
+   * Equivalent to `{ [IS_INTERNAL_SCHEMA_MAP]: true } & Record<any, Schema<Value.AnyValue>>`.
    *
    * @example
-   * type A = InternalSchemaMap & { a: NumberSchema }
+   * type A = { a: NumberSchema } & InternalSchemaMap
    */
   export interface InternalSchemaMap {
     [IS_INTERNAL_SCHEMA_MAP]: true
+  }
+
+  /**
+   * The tagging type for array types.
+   * @private Internal use only.
+   *
+   * @description
+   * `InternalArrayType` stores flags for array types:
+   * - `IS_SPRASE`: Indicates if the array is sparse, which means the array contains `undefined` items.
+   *
+   * @example
+   * type A = string[] & InternalArrayType
+   */
+  export interface InternalArrayType<T extends boolean> {
+    [IS_SPARSE]: T
   }
 
   /**
@@ -81,16 +96,16 @@ export namespace Schema {
     TSchemaLike extends Schema<Value.AnyValue>
     ? TSchemaLike
     : TSchemaLike extends string
-        ? Schemas.StringSchema<Value<TSchemaLike>>
-        : TSchemaLike extends number
-          ? Schemas.NumberSchema<Value<TSchemaLike>>
-          : TSchemaLike extends boolean
-            ? Schemas.BooleanSchema<Value<TSchemaLike>>
-            : TSchemaLike extends any[]
-              ? never // TODO: literal alternative schema is not supported yet
-              : TSchemaLike extends SchemaMap
-                ? TSchemaLike & LiteralSchema<Value<Record<any, any>, compileSchemaMap<Extract<TSchemaLike, SchemaMap>>>>
-                : Schemas.AnySchema<Value<TSchemaLike>>
+      ? Schemas.StringSchema<Value<TSchemaLike>>
+      : TSchemaLike extends number
+        ? Schemas.NumberSchema<Value<TSchemaLike>>
+        : TSchemaLike extends boolean
+          ? Schemas.BooleanSchema<Value<TSchemaLike>>
+          : TSchemaLike extends any[]
+            ? never // TODO: literal alternative schema is not supported yet
+            : TSchemaLike extends SchemaMap
+              ? TSchemaLike & LiteralSchema<Value<Record<any, any>, compileSchemaMap<Extract<TSchemaLike, SchemaMap>>>>
+              : Schemas.AnySchema<Value<TSchemaLike>>
   )
 
   /**
@@ -113,9 +128,7 @@ export namespace Schema {
         : T[Key]
       )
     }
-    & {
-      [Key in Exclude<keyof U, keyof T>]: U[Key]
-    }
+    & { [Key in Exclude<keyof U, keyof T>]: U[Key] }
   )
 
   export type valueType<TSchemaLike extends SchemaLike> = (
