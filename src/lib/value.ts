@@ -97,22 +97,28 @@ export namespace Value {
   )
 
   /** Transform a schema map into object literal type. */
-  export type transformSchemaMap<T extends Schema.InternalSchemaMap> = MakeOptional<{
+  export type transformSchemaMap<T extends Schema.InternalSchemaMap> = IsNever<T, never, MakeOptional<{
     [Key in Exclude<keyof T, typeof IS_INTERNAL_SCHEMA_MAP>]: (
       T[Key] extends Schema<infer TValue>
       ? Value.literal<TValue>
       : never
     )
-  }>
+  }>>
+
+  export type transformArrayType<T extends Schema.InternalArrayType<any>> = IsNever<T, never, (
+    T extends Schema.InternalArrayType<infer TIsSparse> & (infer TItem)[]
+    ? (TItem | IsTrue<TIsSparse, undefined, never>)[]
+    : never
+  )>
 
   /** Get the literal type of a `Value`. */
   export type literal<TValue extends AnyValue> = (
-    TValue['allowed']
+    | TValue['allowed']
     | IsTrue<TValue['isRequired'], never, TValue['default']>
     | IsNever<TValue['augment'], TValue['base'],
-        TValue['augment'] extends Schema.InternalSchemaMap
-        ? transformSchemaMap<TValue['augment']>
-        : TValue['augment']
+        | transformSchemaMap<Extract<TValue['augment'], Schema.InternalSchemaMap>>
+        | transformArrayType<Extract<TValue['augment'], Schema.InternalArrayType<any>>>
+        | Exclude<Exclude<TValue['augment'], Schema.InternalSchemaMap>, Schema.InternalArrayType<any>>
       >
   )
 
@@ -192,9 +198,31 @@ export namespace Value {
   /** Merge two a value types by adding the rules of one type to another. */
   export type concat<T extends AnyValue, U extends AnyValue> = unknown
 
-  export type mergeArray<TValue extends AnyValue, T = never> = replace<TValue, MergeArray<TValue['augment'], T>>
+  export type mergeArray<TValue extends AnyValue, TNewItem = never> = replace<TValue, (
+    IsNever<TValue['augment'], Exclude<TNewItem, undefined>[] & Schema.InternalArrayType<false>, (
+      | mergeArrayOnly<Extract<TValue['augment'], Schema.InternalArrayType<any>>, TNewItem>
+      | Exclude<TValue['augment'], Schema.InternalArrayType<any>>
+    )>
+  )>
 
-  export type excludeFromArray<TValue extends AnyValue, T = never> = replace<TValue, ExcludeFromArray<TValue['augment'], T>>
+  export type mergeArrayOnly<TArray extends Schema.InternalArrayType<any>, TNewItem> = (
+    TArray extends Schema.InternalArrayType<infer TIsSparse> & (infer TItem)[]
+    ? Exclude<TItem | TNewItem, undefined>[] & Schema.InternalArrayType<TIsSparse>
+    : never
+  )
+
+  export type setArraySparse<TValue extends AnyValue, TIsSparse extends boolean> = replace<TValue, (
+    IsNever<TValue['augment'], never[] & Schema.InternalArrayType<TIsSparse>, (
+      | setArraySparseOnly<Extract<TValue['augment'], Schema.InternalArrayType<any>>, TIsSparse>
+      | Exclude<TValue['augment'], Schema.InternalArrayType<any>>
+    )>
+  )>
+
+  export type setArraySparseOnly<TArray extends Schema.InternalArrayType<any>, TIsSparse extends boolean> = (
+    TArray extends (infer TItem)[]
+    ? TItem[] & Schema.InternalArrayType<TIsSparse>
+    : never
+  )
 
   /** Deeply merge two values with `InternalSchemaMap` types. */
   export type deepMergeSchemaMap<T extends AnyValue, U extends AnyValue> = (

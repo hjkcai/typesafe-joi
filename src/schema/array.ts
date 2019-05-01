@@ -32,8 +32,9 @@ export interface ArraySchema<TValue extends Value.AnyValue = Value<any[]>> exten
   /**
    * Allow this array to be sparse.
    */
-  sparse (enabled: false): ArraySchema<Value.mergeArray<TValue, undefined>>
-  sparse (enabled: true): ArraySchema<Value.excludeFromArray<TValue, undefined>>
+  sparse (): ArraySchema<Value.setArraySparse<TValue, true>>
+  sparse (enabled: false): ArraySchema<Value.setArraySparse<TValue, false>>
+  sparse (enabled: true): ArraySchema<Value.setArraySparse<TValue, true>>
 
   /**
    * Allow single values to be checked against rules as if it were provided as an array.
