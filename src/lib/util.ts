@@ -28,7 +28,7 @@ export type ExcludeFromArray<T, U> = (
 export type IsAny<T, TrueType = true, FalseType = false> = 1 extends (T extends never ? 1 : 0) ? TrueType : FalseType
 export type IsInvariant<T, U, TrueType = true, FalseType = false> = [T] extends [U] ? ([U] extends [T] ? TrueType : FalseType) : FalseType
 export type IsInvariantWithoutAny<T, U, TrueType = true, FalseType = false> = IsAny<T, FalseType, IsAny<U, FalseType, IsInvariant<T, U, TrueType, FalseType>>>
-export type IsNever<T, TrueType = true, FalseType = false> = IsInvariant<T, never, TrueType, FalseType>
+export type IsNever<T, TrueType = true, FalseType = false> = [T] extends [never] ? TrueType : FalseType
 
 /**
  * Check if a type is `true`.
