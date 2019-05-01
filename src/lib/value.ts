@@ -11,7 +11,6 @@ export interface Value<
   TBase = never,
   TAugment = never,
   TAllowed = never,
-  TDisallowed = never,
   TDefault = undefined,
   TIsRequired extends boolean = false
 > {
@@ -56,15 +55,6 @@ export interface Value<
   allowed: TAllowed,
 
   /**
-   * The extra disallowed types of a schema.
-   *
-   * @description
-   * The disallowed type is added by `Schema.invalid()`, `Schema.disallow()`, `Schema.not()`.
-   * This type will be removed from the final literal type.
-   */
-  disallowed: TDisallowed,
-
-  /**
    * The default type of a schema.
    *
    * @description
@@ -90,7 +80,6 @@ export namespace Value {
     /* base */ unknown,
     /* augment */ unknown,
     /* allowed */ unknown,
-    /* disallowed */ unknown,
     /* default */ unknown,
     /* isRequired */ boolean
   >
@@ -99,7 +88,6 @@ export namespace Value {
     /* base */ never,
     /* augment */ never,
     /* allowed */ never,
-    /* disallowed */ never,
     /* default */ never,
     /* isRequired */ true
   >
@@ -119,23 +107,19 @@ export namespace Value {
 
   /** Get the literal type of a `Value`. */
   export type literal<TValue extends AnyValue> = (
-    Exclude<(
-      // the extra allowed types
-      TValue['allowed']
-      | IsTrue<TValue['isRequired'], never, TValue['default']>
-      | IsNever<TValue['augment'], TValue['base'],
-          TValue['augment'] extends Schema.InternalSchemaMap
-          ? transformSchemaMap<TValue['augment']>
-          : TValue['augment']
-        >
-    ), TValue['disallowed']>
+    TValue['allowed']
+    | IsTrue<TValue['isRequired'], never, TValue['default']>
+    | IsNever<TValue['augment'], TValue['base'],
+        TValue['augment'] extends Schema.InternalSchemaMap
+        ? transformSchemaMap<TValue['augment']>
+        : TValue['augment']
+      >
   )
 
   export type replace<TValue extends AnyValue, U = never> = Value<
     /* base */ TValue['base'],
     /* augment */ isAllowOnly<TValue, never, U>,
     /* allowed */ TValue['allowed'],
-    /* disallowed */ TValue['disallowed'],
     /* default */ TValue['default'],
     /* isRequired */ TValue['isRequired']
   >
@@ -144,7 +128,6 @@ export namespace Value {
     /* base */ TValue['base'],
     /* augment */ TValue['augment'] | U,
     /* allowed */ TValue['allowed'],
-    /* disallowed */ TValue['disallowed'],
     /* default */ TValue['default'],
     /* isRequired */ TValue['isRequired']
   >
@@ -154,7 +137,6 @@ export namespace Value {
     /* base */ TValue['base'],
     /* augment */ TValue['augment'],
     /* allowed */ TValue['allowed'] | U,
-    /* disallowed */ Exclude<TValue['disallowed'], U>,
     /* default */ TValue['default'],
     /* isRequired */ TValue['isRequired']
   >
@@ -167,7 +149,6 @@ export namespace Value {
     /* base */ never,
     /* augment */ never,
     /* allowed */ TValue['allowed'] | U,
-    /* disallowed */ Exclude<TValue['disallowed'], U>,
     /* default */ TValue['default'],
     /* isRequired */ TValue['isRequired']
   >
@@ -177,7 +158,6 @@ export namespace Value {
     /* base */ TValue['base'],
     /* augment */ TValue['augment'],
     /* allowed */ Exclude<TValue['allowed'], U>,
-    /* disallowed */ TValue['disallowed'] | U,
     /* default */ TValue['default'],
     /* isRequired */ TValue['isRequired']
   >
@@ -187,7 +167,6 @@ export namespace Value {
     /* base */ TValue['base'],
     /* augment */ TValue['augment'],
     /* allowed */ TValue['allowed'],
-    /* disallowed */ TValue['disallowed'],
     /* default */ U,
     /* isRequired */ TValue['isRequired']
   >
@@ -197,7 +176,6 @@ export namespace Value {
     /* base */ TValue['base'],
     /* augment */ TValue['augment'],
     /* allowed */ TValue['allowed'],
-    /* disallowed */ TValue['disallowed'],
     /* default */ TValue['default'],
     /* isRequired */ true
   >
@@ -207,7 +185,6 @@ export namespace Value {
     /* base */ TValue['base'],
     /* augment */ TValue['augment'],
     /* allowed */ TValue['allowed'],
-    /* disallowed */ TValue['disallowed'],
     /* default */ TValue['default'],
     /* isRequired */ false
   >
