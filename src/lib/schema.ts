@@ -72,7 +72,7 @@ export namespace Schema {
    * Construct a `Schema` type from a `SchemaLike`.
    */
   export type fromSchemaLike<TSchemaLike extends SchemaLike> = (
-    TSchemaLike extends Schema<Value.AnyValue>
+    [TSchemaLike] extends [Schema.AnySchema]
     ? TSchemaLike
     : TSchemaLike extends string | number | boolean | null
       ? TSchemaLike & LiteralSchema<Value<TSchemaLike>>
