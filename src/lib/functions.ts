@@ -2,6 +2,10 @@ import * as JoiLib from './joi'
 import * as Schemas from '../schema'
 import { Value } from './value';
 import { Schema } from './schema';
+import { AnyType } from './util';
+
+/** Current version of the joi package. */
+export declare const version: string
 
 /** Generates a schema object that matches any data type. */
 export declare function any (): Schemas.AnySchema
@@ -49,13 +53,6 @@ export declare function alt<T extends Schema.SchemaLike[]> (...types: T): Schema
  */
 export declare function lazy<TSchema extends Schema.SchemaLike> (cb: () => TSchema, options?: JoiLib.LazyOptions): Schemas.LazySchema<Schema.valueType<TSchema>>
 
-// ----------------------------------------------------------------------------
-// Other joi exports
-// ----------------------------------------------------------------------------
-
-/** Current version of the joi package. */
-export declare const version: string
-
 /** Validates a value using the schema and options. */
 export declare function validate<TSchemaLike extends Schema.SchemaLike> (value: any, schema: TSchemaLike, options?: JoiLib.ValidationOptions): JoiLib.ValidationResult<Schema.literal<TSchemaLike>>
 export declare function validate<TSchemaLike extends Schema.SchemaLike> (value: any, schema: TSchemaLike, callback: JoiLib.ValidationCallback<Schema.literal<TSchemaLike>>): void
@@ -82,14 +79,10 @@ export declare function assert (value: any, schema: Schema.SchemaLike, message?:
  */
 export declare function attempt<TSchemaLike extends Schema.SchemaLike> (value: any, schema: TSchemaLike, message?: string | Error): Schema.literal<TSchemaLike>
 
-/**
- * Generates a reference to the value of the named key.
- */
+/** Generates a reference to the value of the named key. */
 export declare function ref (key: string, options?: JoiLib.ReferenceOptions): JoiLib.Reference
 
-/**
- * Checks whether or not the provided argument is a reference. It's especially useful if you want to post-process error messages.
- */
+/** Checks whether or not the provided argument is a reference. It's especially useful if you want to post-process error messages. */
 export declare function isRef (ref: any): ref is JoiLib.Reference
 
 /**
@@ -99,9 +92,7 @@ export declare function isRef (ref: any): ref is JoiLib.Reference
 export declare function reach<TShcemaMap extends Schema.InternalSchemaMap, TSubSchemaKey extends keyof TShcemaMap> (schema: Schemas.ObjectSchema<Value<Record<any, any>, TShcemaMap>>, path: TSubSchemaKey | [TSubSchemaKey]): TShcemaMap[TSubSchemaKey]
 export declare function reach (schema: Schemas.AbstractSchema<any, any>, path: string | string[]): Schemas.AbstractSchema<any, any> | undefined
 
-/**
- * Creates a new Joi instance customized with the extension(s) you provide included.
- */
+/** Creates a new Joi instance customized with the extension(s) you provide included. */
 export declare function extend (extension: JoiLib.Extension | JoiLib.Extension[], ...extensions: Array<JoiLib.Extension | JoiLib.Extension[]>): any
 
 export type Root = typeof import('..')
@@ -122,3 +113,92 @@ export declare function defaults (fn: DefaultsFunction): Root
  * where all the functions relying on `this` are bound to the Joi instance.
  */
 export declare function bind (): Root
+
+/** Returns a plain object representing the schema's rules and properties */
+export declare function describe(schema: Schemas.AbstractSchema<any, any>): JoiLib.Description
+
+/**  Whitelists a value */
+export declare function allow<T extends AnyType[]> (values: T): Schemas.AnySchema<Value.allow<Value<any>, T[number]>>
+export declare function allow<T extends AnyType[]> (...values: T): Schemas.AnySchema<Value.allow<Value<any>, T[number]>>
+
+  /** Adds the provided values into the allowed whitelist and marks them as the only valid values allowed. */
+export declare function valid<T extends AnyType[]> (values: T): Schemas.AnySchema<Value.allowOnly<Value<any>, T[number]>>
+export declare function valid<T extends AnyType[]> (...values: T): Schemas.AnySchema<Value.allowOnly<Value<any>, T[number]>>
+
+  /** Adds the provided values into the allowed whitelist and marks them as the only valid values allowed. */
+export declare function only<T extends AnyType[]> (values: T): Schemas.AnySchema<Value.allowOnly<Value<any>, T[number]>>
+export declare function only<T extends AnyType[]> (...values: T): Schemas.AnySchema<Value.allowOnly<Value<any>, T[number]>>
+
+  /** Adds the provided values into the allowed whitelist and marks them as the only valid values allowed. */
+export declare function equal<T extends AnyType[]> (values: T): Schemas.AnySchema<Value.allowOnly<Value<any>, T[number]>>
+export declare function equal<T extends AnyType[]> (...values: T): Schemas.AnySchema<Value.allowOnly<Value<any>, T[number]>>
+
+  /** Blacklists a value */
+export declare function invalid<T extends AnyType[]> (values: T): Schemas.AnySchema<Value.disallow<Value<any>, T[number]>>
+export declare function invalid<T extends AnyType[]> (...values: T): Schemas.AnySchema<Value.disallow<Value<any>, T[number]>>
+
+  /** Blacklists a value */
+export declare function disallow<T extends AnyType[]> (values: T): Schemas.AnySchema<Value.disallow<Value<any>, T[number]>>
+export declare function disallow<T extends AnyType[]> (...values: T): Schemas.AnySchema<Value.disallow<Value<any>, T[number]>>
+
+  /** Blacklists a value */
+export declare function not<T extends AnyType[]> (values: T): Schemas.AnySchema<Value.disallow<Value<any>, T[number]>>
+export declare function not<T extends AnyType[]> (...values: T): Schemas.AnySchema<Value.disallow<Value<any>, T[number]>>
+
+/** Marks a key as required which will not allow undefined as value. All keys are optional by default. */
+export declare function required (): Schemas.AnySchema<Value.required<Value<any>>>
+
+/** Alias of `required`. */
+export declare function exist(): Schemas.AnySchema<Value.required<Value<any>>>
+
+/** Marks a key as optional which will allow undefined as values. Used to annotate the schema for readability as all keys are optional by default. */
+export declare function optional(): Schemas.AnySchema
+
+/** Marks a key as forbidden which will not allow any value except undefined. Used to explicitly forbid keys. */
+export declare function forbidden(): Schemas.AnySchema<Value.EmptyValue>
+
+/** Marks a key to be removed from a resulting object or array after validation. Used to sanitize output. */
+export declare function strip(): Schemas.AnySchema<Value.EmptyValue>
+
+/** Annotates the key. */
+export declare function description(desc: string): Schemas.AnySchema
+
+/** Annotates the key. */
+export declare function notes(notes: string | string[]): Schemas.AnySchema
+
+/** Annotates the key. */
+export declare function tags(notes: string | string[]): Schemas.AnySchema
+
+/** Attaches metadata to the key. */
+export declare function meta(meta: object): Schemas.AnySchema
+
+/** Annotates the key with an example value, must be valid. */
+export declare function example(value: any): Schemas.AnySchema
+
+/** Annotates the key with an unit name. */
+export declare function unit(name: string): Schemas.AnySchema
+
+/** Overrides the global validate() options for the current key and any sub-key. */
+export declare function options(options: JoiLib.ValidationOptions): Schemas.AnySchema
+
+/** Sets the options.convert options to false which prevent type casting for the current key and any child keys. */
+export declare function strict(isStrict?: boolean): Schemas.AnySchema
+
+/** Returns a new type that is the result of adding the rules of one type to another. */
+export declare function concat<T extends Schemas.AbstractSchema<any, any>>(schema: T): T
+
+/** Converts the type into an alternatives type where the conditions are merged into the type definition. */
+export declare function when<T extends JoiLib.WhenIs> (ref: string | JoiLib.Reference, options: T): Schemas.AlternativesSchema<Schema.valueType<Schema.when<Schemas.AnySchema, T>>>
+export declare function when<T extends JoiLib.When> (ref: Schema.SchemaLike, options: T): Schemas.AlternativesSchema<Schema.valueType<Schema.when<Schemas.AnySchema, T>>>
+
+/** Overrides the key name in error messages. */
+export declare function label(name: string): Schemas.AnySchema
+
+/** Outputs the original untouched value instead of the casted value. */
+export declare function raw(isRaw?: boolean): Schemas.AnySchema
+
+/**
+ * Considers anything that matches the schema to be empty (undefined).
+ * @param schema - any object or joi schema to match. An undefined schema unsets that rule.
+ */
+export declare function empty(schema?: Schema.SchemaLike): Schemas.AnySchema<Value.EmptyValue>
