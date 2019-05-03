@@ -1,8 +1,8 @@
 import { Value } from "../lib/value";
 import { Reference } from "../lib/joi";
-import { AbstractSchema } from ".";
+import { BaseSchema } from ".";
 
-export interface DateSchema<TValue extends Value.AnyValue = Value<Date>> extends AbstractSchema<'date', TValue> {
+export interface DateSchema<TValue extends Value.AnyValue = Value<Date>> extends BaseSchema<'date', TValue> {
   /**
    * Specifies that the value must be greater than date.
    * Notes: 'now' can be passed in lieu of date so as to always compare relatively to the current date,

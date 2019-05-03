@@ -1,7 +1,7 @@
 import { Value } from "../lib/value";
-import { AbstractSchema } from ".";
+import { BaseSchema } from ".";
 
-export interface BooleanSchema<TValue extends Value.AnyValue = Value<boolean>> extends AbstractSchema<'boolean', TValue> {
+export interface BooleanSchema<TValue extends Value.AnyValue = Value<boolean>> extends BaseSchema<'boolean', TValue> {
   /**
    * Allows for additional values to be considered valid booleans by converting them to true during validation.
    * Accepts a value or an array of values. String comparisons are by default case insensitive,

@@ -1,8 +1,8 @@
 import { Value } from "../lib/value";
 import { Reference } from "../lib/joi";
-import { AbstractSchema } from ".";
+import { BaseSchema } from ".";
 
-export interface NumberSchema<TValue extends Value.AnyValue = Value<number>> extends AbstractSchema<'number', TValue> {
+export interface NumberSchema<TValue extends Value.AnyValue = Value<number>> extends BaseSchema<'number', TValue> {
   /**
    * Specifies the minimum value.
    * It can also be a reference to another field.

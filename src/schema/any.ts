@@ -1,6 +1,6 @@
 import { Value } from "../lib/value";
-import { AbstractSchema } from ".";
+import { BaseSchema } from ".";
 
-export interface AnySchema<TValue extends Value.AnyValue = Value<any>> extends AbstractSchema<'any', TValue> {
+export interface AnySchema<TValue extends Value.AnyValue = Value<any>> extends BaseSchema<'any', TValue> {
   /* This is an empty interface */
 }

@@ -1,8 +1,8 @@
 import { Value } from "../lib/value";
-import { AbstractSchema } from ".";
+import { BaseSchema } from ".";
 import * as JoiLib from "../lib/joi";
 
-export interface StringSchema<TValue extends Value.AnyValue = Value<string>> extends AbstractSchema<'string', TValue> {
+export interface StringSchema<TValue extends Value.AnyValue = Value<string>> extends BaseSchema<'string', TValue> {
   /**
    * Allows the value to match any whitelist of blacklist item in a case insensitive comparison.
    */

@@ -1,10 +1,10 @@
 import { Value } from "../lib/value";
 import { Schema } from "../lib/schema";
+import { BaseSchema } from ".";
 import { ConstructorOf } from "../lib/util";
-import { AbstractSchema } from ".";
 import { RenameOptions, Reference } from "../lib/joi";
 
-export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, any>>> extends AbstractSchema<'object', TValue> {
+export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, any>>> extends BaseSchema<'object', TValue> {
   /**
    * Sets or extends the allowed object keys.
    */

@@ -1,8 +1,8 @@
 import { Value } from "../lib/value";
 import { Reference } from "../lib/joi";
-import { AbstractSchema } from ".";
+import { BaseSchema } from ".";
 
-export interface FunctionSchema<TValue extends Value.AnyValue = Value<Function>> extends AbstractSchema<'boolean', TValue> {
+export interface FunctionSchema<TValue extends Value.AnyValue = Value<Function>> extends BaseSchema<'boolean', TValue> {
   /**
    * Specifies the arity of the function where:
    * @param n - the arity expected.
@@ -24,5 +24,5 @@ export interface FunctionSchema<TValue extends Value.AnyValue = Value<Function>>
   /**
    * Requires the function to be a Joi reference.
    */
-  ref (): FunctionSchema<Value.replaceBase<TValue, Reference>>
+  ref (): FunctionSchema<Value.replace<TValue, Reference>>
 }

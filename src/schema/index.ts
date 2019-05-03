@@ -16,6 +16,7 @@ import { ObjectSchema } from './object';
 import { StringSchema } from './string';
 import { SymbolSchema } from './symbol';
 
+/** The collection of all available schemas */
 export interface SchemaCollection<TValue extends Value.AnyValue> {
   alternatives: AlternativesSchema<TValue>,
   any: AnySchema<TValue>,
@@ -31,15 +32,35 @@ export interface SchemaCollection<TValue extends Value.AnyValue> {
   symbol: SymbolSchema<TValue>
 }
 
+/**
+ * Assemble a schema type (e.g. `string`, `any`) and a value type into a schema.
+ * This is basically a lookup in `SchemaCollection`.
+ */
 export type SchemaType<TSchemaType extends string, TValue extends Value.AnyValue> = (
   TSchemaType extends keyof SchemaCollection<any>
   ? SchemaCollection<TValue>[TSchemaType]
   : never
 )
 
-export interface AbstractSchema<TSchemaType extends string, TValue extends Value.AnyValue> extends Schema<TValue>, JoiLib.JoiObject {
+/**
+ * `Schema` with a `schemaType` tag.
+ *
+ * @description
+ * There is no functions defined in `AbstractSchema` because these functions may make trouble to type matching.
+ * `AbstractSchema` is being used to let TypeScript know what is the kind of a `Schema`.
+ */
+export interface AbstractSchema<TSchemaType extends string, TValue extends Value.AnyValue> extends Schema<TValue> {
   schemaType: TSchemaType
+}
 
+/**
+ * The schema type with all the instance methods of `AnySchema` of joi.
+ *
+ * @description
+ * Notice: do not use `BaseSchema` as the constraint pf a type variable.
+ * The functions of `BaseSchema` will make all specific schema types fail.
+ */
+export interface BaseSchema<TSchemaType extends string, TValue extends Value.AnyValue> extends AbstractSchema<TSchemaType, TValue>, JoiLib.JoiObject {
   /** Validates a value using the schema and options. */
   validate (value: any, options?: JoiLib.ValidationOptions): JoiLib.ValidationResult<Value.literal<TValue>>
   validate (value: any, callback: JoiLib.ValidationCallback<Value.literal<TValue>>): void
@@ -73,8 +94,16 @@ export interface AbstractSchema<TSchemaType extends string, TValue extends Value
   not<T extends AnyType[]> (values: T): SchemaType<TSchemaType, Value.disallow<TValue, T[number]>>
   not<T extends AnyType[]> (...values: T): SchemaType<TSchemaType, Value.disallow<TValue, T[number]>>
 
+  /**
+   * By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because
+   * they use `this` internally.
+   * So `Joi.string()` works but if you extract the function from it and call `string()` it won't.
+   * `bind()` creates a new Joi instance where all the functions relying on `this` are bound to the Joi instance.
+   */
+  bind(): this
+
   /** Returns a new type that is the result of adding the rules of one type to another. */
-  concat<TSchemaLike extends Schema.SchemaLike> (schema: TSchemaLike): SchemaType<TSchemaType, Value.concat<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaLike>>>>
+  concat<TSchema extends AbstractSchema<string, Value.AnyValue>> (schema: TSchema): Schema.concat<this, TSchema>
 
   /** Marks a key as required which will not allow undefined as value. All keys are optional by default. */
   required (): SchemaType<TSchemaType, Value.required<TValue>>
