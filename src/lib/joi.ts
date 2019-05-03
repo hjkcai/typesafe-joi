@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import * as Joi from '@hapi/joi'
 import { Value } from './value';
 import { Schema } from './schema';
 import { ObjectSchema, AbstractSchema } from '../schema';
@@ -30,7 +30,7 @@ export {
   Extension,
   Err,
   LazyOptions
-} from 'joi'
+} from '@hapi/joi'
 
 export interface ValidationResult<T> extends Pick<Promise<T>, 'then' | 'catch'> {
   error: Joi.ValidationError | null;
