@@ -1,6 +1,6 @@
 import { Schema } from './schema'
 import { IS_INTERNAL_SCHEMA_MAP } from "./symbols";
-import { MakeOptional, IsNever, IsTrue, MergeArray, ExcludeFromArray } from './util';
+import { MakeOptional, IsNever, IsTrue, MergeArray, ExcludeFromArray, IsAny, IsInvariant, IsUndefinedOrNever } from './util';
 
 /**
  * A structure stores all information needed to match Joi's validation logic.
@@ -196,7 +196,18 @@ export namespace Value {
   >
 
   /** Merge two a value types by adding the rules of one type to another. */
-  export type concat<T extends AnyValue, U extends AnyValue> = unknown
+  export type concat<T extends AnyValue, U extends AnyValue> = Value<
+    /* base */ IsAny<T['base'], IsAny<U['base'], any, U['base']>, T['base']>,
+    /* augment */ (
+      | Schema.deepConcatSchemaMap<Extract<T['augment'], Schema.InternalSchemaMap>, Extract<U['augment'], Schema.InternalSchemaMap>>
+      | mergeArrayOnly<Extract<T['augment'], Schema.InternalArrayType<any>>, Extract<U['augment'], Schema.InternalArrayType<any>> extends (infer UItem)[] ? UItem : never>
+      | Exclude<Exclude<T['augment'], Schema.InternalSchemaMap>, Schema.InternalArrayType<any>>
+      | Exclude<Exclude<U['augment'], Schema.InternalSchemaMap>, Schema.InternalArrayType<any>>
+    ),
+    /* allowed */ T['allowed'] | U['allowed'],
+    /* default */ IsUndefinedOrNever<U['default'], T['default'], U['default']>,
+    /* isRequired */ U['isRequired']
+  >
 
   export type mergeArray<TValue extends AnyValue, TNewItem = never> = replace<TValue, (
     IsNever<TValue['augment'], Exclude<TNewItem, undefined>[] & Schema.InternalArrayType<false>, (

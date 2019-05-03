@@ -1,5 +1,6 @@
 import * as Schemas from '../schema'
 import { Value } from "./value";
+import { IsNever } from './util';
 import { IS_INTERNAL_SCHEMA_MAP, IS_SPARSE, IS_INTERNAL_LITERAL_SCHEMA, VALUE } from "./symbols";
 
 /**
@@ -131,8 +132,35 @@ export namespace Schema {
     & { [Key in Exclude<keyof U, keyof T>]: U[Key] }
   )
 
+  export type concat<T extends Schemas.AbstractSchema<any, Value.AnyValue>, U extends Schemas.AbstractSchema<any, Value.AnyValue>> = (
+    Schemas.SchemaType<
+      T['schemaType'] extends 'any'
+      ? U['schemaType'] extends 'any'
+        ? 'any'
+        : U['schemaType']
+      : T['schemaType'],
+      Value.concat<T[typeof VALUE], U[typeof VALUE]>
+    >
+  )
+
+  export type deepConcatSchemaMap<T extends InternalSchemaMap, U extends InternalSchemaMap> = IsNever<T, IsNever<U, never, U>, IsNever<U, never, (
+    InternalSchemaMap
+    & {
+      [Key in Exclude<keyof T, typeof IS_INTERNAL_SCHEMA_MAP>]: (
+        Key extends keyof U
+        ? T[Key] extends Schemas.AbstractSchema<any, Value.AnyValue>
+          ? U[Key] extends Schemas.AbstractSchema<any, Value.AnyValue>
+            ? concat<T[Key], U[Key]>
+            : U[Key]
+          : U[Key]
+        : T[Key]
+      )
+    }
+    & { [Key in Exclude<keyof U, keyof T>]: U[Key] }
+  )>>
+
   export type valueType<TSchemaLike extends SchemaLike> = (
-    Exclude<fromSchemaLike<TSchemaLike>[typeof VALUE], undefined>
+    fromSchemaLike<TSchemaLike>[typeof VALUE]
   )
 
   export type literal<TSchemaLike extends SchemaLike> = (
