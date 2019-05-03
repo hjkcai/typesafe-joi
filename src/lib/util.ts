@@ -1,29 +1,6 @@
 export type AnyType = string | number | boolean | symbol | object | null | undefined
 export type ConstructorOf<T> = new (...args: any[]) => T
-export type ExcludeUndefined<T> = Exclude<T, undefined>
 export type ArrayItemType<T> = T extends (infer U)[] ? U : never
-
-/**
- * Union the array types of `T` and `U`, leaving other types of `T` unmodified.
- * @example
- * type A = MergeArray<A[] | B, C> // (A | C)[] | B
- */
-export type MergeArray<T, U> = (
-  T extends (infer TValue)[]
-  ? (TValue | U)[]
-  : T
-)
-
-/**
- * Exclude `U` from the array types of `T`, leaving other types of `T` unmodified.
- * @example
- * type A = ExcludeFromArray<(A | C)[] | B, C> // A[] | B
- */
-export type ExcludeFromArray<T, U> = (
-  T extends any[]
-  ? Exclude<T, U>[]
-  : T
-)
 
 export type IsAny<T, TrueType = true, FalseType = false> = 1 extends (T extends never ? 1 : 0) ? TrueType : FalseType
 export type IsInvariant<T, U, TrueType = true, FalseType = false> = [T] extends [U] ? ([U] extends [T] ? TrueType : FalseType) : FalseType

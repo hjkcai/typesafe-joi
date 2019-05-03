@@ -10,7 +10,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    */
   keys (schemaMap?: null): ObjectSchema<Value.replace<TValue, never>>
   keys<TSchemaMap extends Schema.SchemaMap> (schemaMap: TSchemaMap): ObjectSchema<
-    Value.deepMergeSchemaMap<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaMap>>>
+    Value.deepMerge<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaMap>>>
   >
 
   /**
@@ -18,7 +18,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    */
   append (schemaMap?: null): this
   append<TSchemaMap extends Schema.SchemaMap> (schemaMap: TSchemaMap): ObjectSchema<
-    Value.deepMergeSchemaMap<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaMap>>>
+    Value.deepMerge<TValue, Schema.valueType<Schema.fromSchemaLike<TSchemaMap>>>
   >
 
   /**
@@ -32,7 +32,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
   /**
    * Requires the object to be a Joi schema instance.
    */
-  schema (): ObjectSchema<Value.replace<TValue, AbstractSchema<any, any>>>
+  schema (): ObjectSchema<Value.replace<TValue, BaseSchema<any, any>>>
 
   /**
    * Specifies the minimum number of keys in the object.
