@@ -183,11 +183,7 @@ export namespace Schema {
     & {
       [Key in Exclude<keyof T, typeof IS_INTERNAL_SCHEMA_MAP>]: (
         Key extends keyof U
-        ? T[Key] extends Schemas.AbstractSchema<any, Value.AnyValue>
-          ? U[Key] extends Schemas.AbstractSchema<any, Value.AnyValue>
-            ? concat<T[Key], U[Key]>
-            : U[Key]
-          : U[Key]
+        ? concat<Extract<T[Key], Schemas.AbstractSchema<any, Value.AnyValue>>, Extract<U[Key], Schemas.AbstractSchema<any, Value.AnyValue>>>
         : T[Key]
       )
     }
