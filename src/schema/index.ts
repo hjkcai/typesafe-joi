@@ -165,8 +165,8 @@ export interface BaseSchema<TSchemaType extends string, TValue extends Value.Any
   default<TDefault> (value?: TDefault, description?: string): SchemaType<TSchemaType, Value.setDefault<TValue, TDefault>>
 
   /** Converts the type into an alternatives type where the conditions are merged into the type definition where. */
-  when<T extends JoiLib.WhenIs> (ref: string | JoiLib.Reference, options: T): UNKNOWN
-  when<T extends JoiLib.When> (ref: Schema.SchemaLike, options: T): UNKNOWN
+  when<T extends JoiLib.WhenIs> (ref: string | JoiLib.Reference, options: T): AlternativesSchema<Schema.valueType<Schema.when<this, T>>>
+  when<T extends JoiLib.When> (ref: Schema.SchemaLike, options: T): AlternativesSchema<Schema.valueType<Schema.when<this, T>>>
 
   /** Overrides the key name in error messages. */
   label (name: string): this

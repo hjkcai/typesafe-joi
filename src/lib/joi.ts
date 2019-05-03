@@ -53,17 +53,17 @@ export interface ExtensionBoundSchema<TValue extends Value.AnyValue = Value.AnyV
 
 export interface Rules<P extends object = any> {
   name: string
-  params?: ObjectSchema | {[key in keyof P]: Schema.SchemaLike; }
+  params?: ObjectSchema | { [key in keyof P]: Schema.SchemaLike; }
   setup? (this: ExtensionBoundSchema, params: P): AbstractSchema<any, any> | void
   validate? (this: ExtensionBoundSchema, params: P, value: any, state: Joi.State, options: Joi.ValidationOptions): any
   description?: string | ((params: P) => string)
 }
 
-export interface When<Then extends Schema.SchemaLike = never, Otherwise extends Schema.SchemaLike = never> {
+export interface When<Then extends Schema.SchemaLike = any, Otherwise extends Schema.SchemaLike = any> {
   then?: Then,
   otherwise?: Otherwise
 }
 
-export interface WhenIs<Then extends Schema.SchemaLike = never, Otherwise extends Schema.SchemaLike = never> extends When<Then, Otherwise> {
+export interface WhenIs<Then extends Schema.SchemaLike = any, Otherwise extends Schema.SchemaLike = any> extends When<Then, Otherwise> {
   is: Schema.SchemaLike
 }

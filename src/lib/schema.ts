@@ -1,4 +1,5 @@
 import * as Schemas from '../schema'
+import { When } from './joi';
 import { Value } from "./value";
 import { IsNever } from './util';
 import { IS_INTERNAL_SCHEMA_MAP, IS_SPARSE, IS_INTERNAL_LITERAL_SCHEMA, VALUE } from "./symbols";
@@ -143,6 +144,10 @@ export namespace Schema {
     >
   )
 
+  export type concatSchemaLike<T extends Schemas.AbstractSchema<any, Value.AnyValue>, U extends SchemaLike> = (
+    concat<T, Extract<compile<U>, Schemas.AbstractSchema<any, Value.AnyValue>>>
+  )
+
   export type deepConcatSchemaMap<T extends InternalSchemaMap, U extends InternalSchemaMap> = IsNever<T, IsNever<U, never, U>, IsNever<U, never, (
     InternalSchemaMap
     & {
@@ -158,6 +163,15 @@ export namespace Schema {
     }
     & { [Key in Exclude<keyof U, keyof T>]: U[Key] }
   )>>
+
+  export type when<T extends Schemas.AbstractSchema<any, Value.AnyValue>, U extends When<any, any>> = (
+    U extends When<infer Then, infer Otherwise>
+    ? (
+      | concatSchemaLike<T, Then>
+      | concatSchemaLike<T, Otherwise>
+    )
+    : never
+  )
 
   export type valueType<TSchemaLike extends SchemaLike> = (
     fromSchemaLike<TSchemaLike>[typeof VALUE]
