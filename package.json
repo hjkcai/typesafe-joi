@@ -12,9 +12,14 @@
     "typescript",
     "validation"
   ],
+  "files": [
+    "dist",
+    "src",
+    "typesafe-joi.js"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "clean": "shx rm -r dist",
+    "clean": "shx rm -rf dist",
     "test": "tsc -p . --noEmit",
     "prepublishOnly": "npm-run-all -s test clean build"
   },
