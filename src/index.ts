@@ -14,4 +14,4 @@ export * from './schema'
 
 export type SchemaLike = import('./lib/schema').Schema.SchemaLike
 
-module.exports = require('joi')
+module.exports = require('@hapi/joi')
