@@ -1,1 +1,1 @@
-module.exports = require('joi')
+module.exports = require('@hapi/joi')
