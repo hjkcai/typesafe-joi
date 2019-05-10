@@ -100,7 +100,7 @@ export interface BaseSchema<TSchemaType extends string, TValue extends Value.Any
    * So `Joi.string()` works but if you extract the function from it and call `string()` it won't.
    * `bind()` creates a new Joi instance where all the functions relying on `this` are bound to the Joi instance.
    */
-  bind(): this
+  bind (): this
 
   /** Returns a new type that is the result of adding the rules of one type to another. */
   concat<TSchema extends AbstractSchema<string, Value.AnyValue>> (schema: TSchema): Schema.concat<this, TSchema>
@@ -115,7 +115,7 @@ export interface BaseSchema<TSchemaType extends string, TValue extends Value.Any
   optional (): SchemaType<TSchemaType, Value.optional<TValue>>
 
   /** Marks a key as forbidden which will not allow any value except undefined. Used to explicitly forbid keys. */
-  forbidden (): SchemaType<TSchemaType, Value.EmptyValue>
+  forbidden (): SchemaType<TSchemaType, Value<undefined>>
 
   /** Marks a key to be removed from a resulting object or array after validation. Used to sanitize output. */
   strip (): SchemaType<TSchemaType, Value.EmptyValue>
