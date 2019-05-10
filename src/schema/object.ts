@@ -27,7 +27,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    * @param constructor - the constructor function that the object must be an instance of.
    * @param name - an alternate name to use in validation errors. This is useful when the constructor function does not have a name.
    */
-  type<T> (constructor: ConstructorOf<T>, name?: string): ObjectSchema<Value.appendSchemaMap<TValue, T>>
+  type<T> (constructor: ConstructorOf<T>, name?: string): ObjectSchema<Value.replace<TValue, T>>
 
   /**
    * Requires the object to be a Joi schema instance.
@@ -85,8 +85,8 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    * Defines an exclusive relationship between a set of keys where only one is allowed but none are required where:
    * `peers` - the exclusive key names that must not appear together but where none are required.
    */
-  oxor(...peers: string[]): this;
-  oxor(peers: string[]): this;
+  oxor (...peers: string[]): this;
+  oxor (peers: string[]): this;
 
   /**
    * Defines an exclusive relationship between a set of keys. one of them is required but not at the same time where:
