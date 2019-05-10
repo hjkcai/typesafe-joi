@@ -56,7 +56,7 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    * @param schema - the schema object matching keys must validate against
    */
   pattern<TSchemaLike extends Schema.SchemaLike> (pattern: RegExp | Schema.SchemaLike, schema: TSchemaLike): ObjectSchema<
-    Value.appendSchemaMap<TValue, Record<any, Schema.literal<TSchemaLike>>>
+    Value.appendSchemaMap<TValue, Record<any, Schema.fromSchemaLike<TSchemaLike>>>
   >
 
   /**
