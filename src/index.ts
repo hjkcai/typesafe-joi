@@ -6,12 +6,15 @@
 /// <reference types="node" />
 /// <reference lib="es2015" />
 
+import * as Cast from './lib/cast'
+
 export * from './lib/functions'
 export * from './lib/joi'
 export * from './lib/schema'
 export * from './lib/value'
 export * from './schema'
 
+export { Cast }
 export type SchemaLike = import('./lib/schema').Schema.SchemaLike
 
 module.exports = require('@hapi/joi')
