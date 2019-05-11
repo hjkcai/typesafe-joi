@@ -2,7 +2,7 @@ import * as Schemas from '../schema'
 import { When } from './joi';
 import { Value } from "./value";
 import { IsNever } from './util';
-import { IS_INTERNAL_SCHEMA_MAP, IS_SPARSE, IS_INTERNAL_LITERAL_SCHEMA, VALUE } from "./symbols";
+import { IS_INTERNAL_OBJECT, IS_SPARSE, IS_INTERNAL_LITERAL_SCHEMA, VALUE } from "./symbols";
 
 /**
  * The abstract schema interface.
@@ -27,14 +27,14 @@ export namespace Schema {
    * @private Internal use only.
    *
    * @description
-   * Types intersect with `InternalSchemaMap` ensures all its keys have the value type `Schema<Value.AnyValue>`.
+   * Types intersect with `InternalObjectType` ensures all its keys have the value type `Schema<Value.AnyValue>`.
    * Equivalent to `{ [IS_INTERNAL_SCHEMA_MAP]: true } & Record<any, Schema<Value.AnyValue>>`.
    *
    * @example
-   * type A = { a: NumberSchema } & InternalSchemaMap
+   * type A = { a: NumberSchema } & InternalObjectType
    */
-  export interface InternalSchemaMap {
-    [IS_INTERNAL_SCHEMA_MAP]: true
+  export interface InternalObjectType {
+    [IS_INTERNAL_OBJECT]: true
   }
 
   /**
@@ -96,7 +96,7 @@ export namespace Schema {
    *
    * @example
    * type A = fromSchemaLike<1> = LiteralSchema<Value<1>> & 1;
-   * type B = fromSchemaLike<{}> = LiteralSchema<Value<Record<any, any>, InternalSchemaMap & {}>> & {}
+   * type B = fromSchemaLike<{}> = LiteralSchema<Value<Record<any, any>, InternalObjectType & {}>> & {}
    */
   export type fromSchemaLike<TSchemaLike extends SchemaLike> = (
     [TSchemaLike] extends [Schema<Value.AnyValue>]
@@ -159,24 +159,24 @@ export namespace Schema {
   // SchemaMap transformations
   // --------------------------------------------------------------------------
 
-  /** Construct an internal `InternalSchemaMap` from a `SchemaMap`. */
-  export type fromSchemaMap<TSchemaMap extends SchemaMap> = InternalSchemaMap & {
+  /** Construct an internal `InternalObjectType` from a `SchemaMap`. */
+  export type fromSchemaMap<TSchemaMap extends SchemaMap> = InternalObjectType & {
     [Key in keyof TSchemaMap]: fromSchemaLike<TSchemaMap[Key]>
   }
 
-  /** Compile an internal `InternalSchemaMap` from a `SchemaMap`. */
-  export type compileSchemaMap<TSchemaMap extends SchemaMap> = InternalSchemaMap & {
+  /** Compile an internal `InternalObjectType` from a `SchemaMap`. */
+  export type compileSchemaMap<TSchemaMap extends SchemaMap> = InternalObjectType & {
     [Key in keyof TSchemaMap]: compile<TSchemaMap[Key]>
   }
 
   /**
-   * Deeply merge two `InternalSchemaMap`s.
+   * Deeply merge two `InternalObjectType`s.
    * @description This actually acts like deep assign.
    */
-  export type deepMergeSchemaMap<T extends InternalSchemaMap, U extends InternalSchemaMap> = (
-    InternalSchemaMap
+  export type deepMergeSchemaMap<T extends InternalObjectType, U extends InternalObjectType> = (
+    InternalObjectType
     & {
-      [Key in Exclude<keyof T, typeof IS_INTERNAL_SCHEMA_MAP>]: (
+      [Key in Exclude<keyof T, typeof IS_INTERNAL_OBJECT>]: (
         Key extends keyof U
         ? T[Key] extends Schema<infer TValue>
           ? U[Key] extends Schema<infer UValue>
@@ -190,13 +190,13 @@ export namespace Schema {
   )
 
   /**
-   * Deeply concat two `InternalSchemaMap`s.
+   * Deeply concat two `InternalObjectType`s.
    * @description This is similar to `deepMergeSchemaMap` but uses `concat` when merging.
    */
-  export type deepConcatSchemaMap<T extends InternalSchemaMap, U extends InternalSchemaMap> = IsNever<T, IsNever<U, never, U>, IsNever<U, never, (
-    InternalSchemaMap
+  export type deepConcatSchemaMap<T extends InternalObjectType, U extends InternalObjectType> = IsNever<T, IsNever<U, never, U>, IsNever<U, never, (
+    InternalObjectType
     & {
-      [Key in Exclude<keyof T, typeof IS_INTERNAL_SCHEMA_MAP>]: (
+      [Key in Exclude<keyof T, typeof IS_INTERNAL_OBJECT>]: (
         Key extends keyof U
         ? concat<Extract<T[Key], Schemas.AbstractSchema<any, Value.AnyValue>>, Extract<U[Key], Schemas.AbstractSchema<any, Value.AnyValue>>>
         : T[Key]

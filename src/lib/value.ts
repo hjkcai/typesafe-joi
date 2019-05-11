@@ -1,5 +1,5 @@
 import { Schema } from './schema'
-import { IS_INTERNAL_SCHEMA_MAP } from "./symbols";
+import { IS_INTERNAL_OBJECT } from "./symbols";
 import { MakeOptional, IsNever, IsTrue, IsAny, IsUndefinedOrNever, ArrayItemType } from './util';
 
 /**
@@ -101,11 +101,11 @@ export namespace Value {
   // --------------------------------------------------------------------------
 
   /**
-   * Transform `InternalSchemaMap` into object literal type.
+   * Transform `InternalObjectType` into object literal type.
    * @private
    */
-  export type transformSchemaMap<T extends Schema.InternalSchemaMap> = IsNever<T, never, MakeOptional<{
-    [Key in Exclude<keyof T, typeof IS_INTERNAL_SCHEMA_MAP>]: (
+  export type transformSchemaMap<T extends Schema.InternalObjectType> = IsNever<T, never, MakeOptional<{
+    [Key in Exclude<keyof T, typeof IS_INTERNAL_OBJECT>]: (
       T[Key] extends Schema<infer TValue>
       ? Value.literal<TValue>
       : never
@@ -127,9 +127,9 @@ export namespace Value {
     | TValue['allowed']
     | IsTrue<TValue['isRequired'], never, TValue['default']>
     | IsNever<TValue['augment'], TValue['base'],
-        | transformSchemaMap<Extract<TValue['augment'], Schema.InternalSchemaMap>>
+        | transformSchemaMap<Extract<TValue['augment'], Schema.InternalObjectType>>
         | transformArrayType<Extract<TValue['augment'], Schema.InternalArrayType<any>>>
-        | Exclude<Exclude<TValue['augment'], Schema.InternalSchemaMap>, Schema.InternalArrayType<any>>
+        | Exclude<Exclude<TValue['augment'], Schema.InternalObjectType>, Schema.InternalArrayType<any>>
       >
   )
 
@@ -198,10 +198,10 @@ export namespace Value {
   export type concat<T extends AnyValue, U extends AnyValue> = Value<
     /* base */ IsAny<T['base'], IsAny<U['base'], any, U['base']>, T['base']>,
     /* augment */ (
-      | Schema.deepConcatSchemaMap<Extract<T['augment'], Schema.InternalSchemaMap>, Extract<U['augment'], Schema.InternalSchemaMap>>
+      | Schema.deepConcatSchemaMap<Extract<T['augment'], Schema.InternalObjectType>, Extract<U['augment'], Schema.InternalObjectType>>
       | mergeArrayOnly<Extract<T['augment'], Schema.InternalArrayType<any>>, ArrayItemType<Extract<U['augment'], Schema.InternalArrayType<any>>>>
-      | Exclude<Exclude<T['augment'], Schema.InternalSchemaMap>, Schema.InternalArrayType<any>>
-      | Exclude<Exclude<U['augment'], Schema.InternalSchemaMap>, Schema.InternalArrayType<any>>
+      | Exclude<Exclude<T['augment'], Schema.InternalObjectType>, Schema.InternalArrayType<any>>
+      | Exclude<Exclude<U['augment'], Schema.InternalObjectType>, Schema.InternalArrayType<any>>
     ),
     /* allowed */ T['allowed'] | U['allowed'],
     /* default */ IsUndefinedOrNever<U['default'], T['default'], U['default']>,
@@ -247,23 +247,23 @@ export namespace Value {
    * Deeply merge two `Value`s.
    *
    * @description
-   * - If `T` and `U` both have `InternalSchemaMap` type, merge them.
+   * - If `T` and `U` both have `InternalObjectType` type, merge them.
    * - Otherwise just directly use `U` as the result.
    */
   export type deepMerge<T extends AnyValue, U extends AnyValue> = (
-    IsNever<T['augment'], 0, T['augment']> extends Schema.InternalSchemaMap
-    ? IsNever<U['augment'], 0, U['augment']> extends Schema.InternalSchemaMap
+    IsNever<T['augment'], 0, T['augment']> extends Schema.InternalObjectType
+    ? IsNever<U['augment'], 0, U['augment']> extends Schema.InternalObjectType
       ? replace<U, Schema.deepMergeSchemaMap<
-          Extract<T['augment'], Schema.InternalSchemaMap>,
-          Extract<U['augment'], Schema.InternalSchemaMap>
+          Extract<T['augment'], Schema.InternalObjectType>,
+          Extract<U['augment'], Schema.InternalObjectType>
         >>
       : U
     : U
   )
 
-  /** Make intersection to the augment type of a `Value` with `InternalSchemaMap` and `U`. */
+  /** Make intersection to the augment type of a `Value` with `InternalObjectType` and `U`. */
   export type appendSchemaMap<TValue extends AnyValue, U> = (
-    replace<TValue, IsNever<TValue['augment'], Schema.InternalSchemaMap & U, TValue['augment'] & Schema.InternalSchemaMap & U>>
+    replace<TValue, IsNever<TValue['augment'], Schema.InternalObjectType & U, TValue['augment'] & Schema.InternalObjectType & U>>
   )
 
   // --------------------------------------------------------------------------

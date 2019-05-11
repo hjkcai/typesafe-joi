@@ -89,7 +89,7 @@ export declare function isRef (ref: any): ref is JoiLib.Reference
  * Get a sub-schema of an existing schema based on a `path` that can be either a string or an array
  * of strings For string values path separator is a dot (`.`)
  */
-export declare function reach<TShcemaMap extends Schema.InternalSchemaMap, TSubSchemaKey extends keyof TShcemaMap> (schema: Schemas.ObjectSchema<Value<Record<any, any>, TShcemaMap>>, path: TSubSchemaKey | [TSubSchemaKey]): TShcemaMap[TSubSchemaKey]
+export declare function reach<TShcemaMap extends Schema.InternalObjectType, TSubSchemaKey extends keyof TShcemaMap> (schema: Schemas.ObjectSchema<Value<Record<any, any>, TShcemaMap>>, path: TSubSchemaKey | [TSubSchemaKey]): TShcemaMap[TSubSchemaKey]
 export declare function reach (schema: Schemas.AbstractSchema<any, any>, path: string | string[]): Schemas.AbstractSchema<any, any> | undefined
 
 /** Creates a new Joi instance customized with the extension(s) you provide included. */
