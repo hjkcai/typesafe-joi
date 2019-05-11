@@ -73,6 +73,21 @@ export namespace Schema {
   // --------------------------------------------------------------------------
 
   /**
+   * Construct a `Schema` from another `Schema`.
+   *
+   * @description
+   * The new `Schema` has the same type to the old `Schema`,
+   * but the new one can have different value type.
+   */
+  export type from<TSchema extends Schema<Value.AnyValue>, TValue extends Value.AnyValue = Schema.valueType<TSchema>> = (
+    TSchema extends LiteralSchema<any>
+      ? LiteralSchema<TValue>
+      : TSchema extends Schemas.AbstractSchema<any, any>
+        ? Schemas.SchemaType<TSchema['schemaType'], TValue>
+        : Schema<TValue>
+  )
+
+  /**
    * Construct a `Schema` type from a `SchemaLike`.
    *
    * @description
@@ -165,7 +180,7 @@ export namespace Schema {
         Key extends keyof U
         ? T[Key] extends Schema<infer TValue>
           ? U[Key] extends Schema<infer UValue>
-            ? Schema<Value.deepMerge<TValue, UValue>>  // TODO: Preserve the original schema type from T[Key]
+            ? from<Extract<U[Key], Schema<any>>, Value.deepMerge<TValue, UValue>>
             : U[Key]
           : U[Key]
         : T[Key]
