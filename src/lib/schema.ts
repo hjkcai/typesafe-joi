@@ -102,10 +102,10 @@ export namespace Schema {
     [TSchemaLike] extends [Schema<Value.AnyValue>]
     ? TSchemaLike
     : TSchemaLike extends string | number | boolean | null
-      ? TSchemaLike & LiteralSchema<Value<TSchemaLike>>
+      ? LiteralSchema<Value<TSchemaLike>>
       : TSchemaLike extends any[]
         ? never // TODO: literal alternative schema is not supported yet
-        : TSchemaLike & LiteralSchema<Value<
+        : LiteralSchema<Value<
             Record<any, any>,
             fromSchemaMap<Extract<TSchemaLike, SchemaMap>>
           >>
