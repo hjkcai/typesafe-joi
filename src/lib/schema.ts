@@ -9,7 +9,7 @@ import { IS_INTERNAL_OBJECT, IS_SPARSE, IS_INTERNAL_LITERAL_SCHEMA, VALUE } from
  * @description This interface only stores the value type of the schema for general use.
  * For Joi's schemas, see `schemas` folder.
  */
-export interface Schema<TValue extends Value.AnyValue> {
+export interface Schema<TValue extends Value.AnyValue = Value.AnyValue> {
   /**
    * The value type of the schema.
    * @private DO NOT USE! This is not a real joi schema property but is required for typesafe-joi to work.
@@ -19,7 +19,7 @@ export interface Schema<TValue extends Value.AnyValue> {
 
 export namespace Schema {
   export type SchemaMap = { [Key in keyof any]: SchemaLike }
-  export type SchemaLikeBase = string | number | boolean | null | Schema<Value.AnyValue> | SchemaMap
+  export type SchemaLikeBase = string | number | boolean | null | Schema | SchemaMap
   export type SchemaLike = SchemaLikeBase | SchemaLikeBase[]
 
   /**
@@ -27,8 +27,8 @@ export namespace Schema {
    * @private Internal use only.
    *
    * @description
-   * Types intersect with `InternalObjectType` ensures all its keys have the value type `Schema<Value.AnyValue>`.
-   * Equivalent to `{ [IS_INTERNAL_SCHEMA_MAP]: true } & Record<any, Schema<Value.AnyValue>>`.
+   * Types intersect with `InternalObjectType` ensures all its keys have the value type `Schema`.
+   * Equivalent to `{ [IS_INTERNAL_SCHEMA_MAP]: true } & Record<any, Schema>`.
    *
    * @example
    * type A = { a: NumberSchema } & InternalObjectType
@@ -79,7 +79,7 @@ export namespace Schema {
    * The new `Schema` has the same type to the old `Schema`,
    * but the new one can have different value type.
    */
-  export type from<TSchema extends Schema<Value.AnyValue>, TValue extends Value.AnyValue = Schema.valueType<TSchema>> = (
+  export type from<TSchema extends Schema, TValue extends Value.AnyValue = Schema.valueType<TSchema>> = (
     TSchema extends LiteralSchema<any>
       ? LiteralSchema<TValue>
       : TSchema extends Schemas.AbstractSchema<any, any>
@@ -99,7 +99,7 @@ export namespace Schema {
    * type B = fromSchemaLike<{}> = LiteralSchema<Value<Record<any, any>, InternalObjectType & {}>> & {}
    */
   export type fromSchemaLike<TSchemaLike extends SchemaLike> = (
-    [TSchemaLike] extends [Schema<Value.AnyValue>]
+    [TSchemaLike] extends [Schema]
     ? TSchemaLike
     : TSchemaLike extends string | number | boolean | null
       ? LiteralSchema<Value<TSchemaLike>>
@@ -118,7 +118,7 @@ export namespace Schema {
    * This is almost the same to `fromSchemaLike` but it returns the corresponding schema type.
    */
   export type compile<TSchemaLike extends SchemaLike> = (
-    TSchemaLike extends Schema<Value.AnyValue>
+    TSchemaLike extends Schema
     ? TSchemaLike
     : TSchemaLike extends string
       ? Schemas.StringSchema<Value.allow<Value, TSchemaLike>>
