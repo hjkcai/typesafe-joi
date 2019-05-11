@@ -1,6 +1,6 @@
 import { Schema } from './schema'
 import { IS_INTERNAL_OBJECT } from "./symbols";
-import { MakeOptional, IsNever, IsTrue, IsAny, IsUndefinedOrNever, ArrayItemType } from './util';
+import { MakeOptional, IsNever, IsTrue, IsAny, IsUndefinedOrNever, ArrayItemType, IsInvariant } from './util';
 
 /**
  * A structure stores all information needed to match Joi's validation logic.
@@ -266,6 +266,48 @@ export namespace Value {
     replace<TValue, IsNever<TValue['augment'], Schema.InternalObjectType & U, TValue['augment'] & Schema.InternalObjectType & U>>
   )
 
+  /**
+   * Make some keys of the object optional.
+   * If one of the key is an empty string, make the entire object optional.
+   */
+  export type setOptionalKeys<TValue extends AnyValue, TKeys extends string> = (
+    IsInvariant<TKeys, string, TValue,
+      TValue['augment'] extends Schema.InternalSchemaMap
+      ? '' extends TKeys
+        ? Value.optional<Value.replace<TValue, setOptionalKeysInternal<TValue['augment'], TKeys>>>
+        : Value.replace<TValue, setOptionalKeysInternal<TValue['augment'], TKeys>>
+      : never
+    >
+  )
+
+  /**
+   * Make some keys of the object required.
+   * If one of the key is an empty string, make the entire object required.
+   */
+  export type setRequiredKeys<TValue extends AnyValue, TKeys extends string> = (
+    IsInvariant<TKeys, string, TValue,
+      TValue['augment'] extends Schema.InternalSchemaMap
+      ? '' extends TKeys
+        ? Value.required<Value.replace<TValue, setOptionalKeysInternal<TValue['augment'], TKeys>>>
+        : Value.replace<TValue, setOptionalKeysInternal<TValue['augment'], TKeys>>
+      : never
+    >
+  )
+
+  /**
+   * Make some keys of the object forbidden.
+   * If one of the key is an empty string, make the entire object forbidden.
+   */
+  export type setForbiddenKeys<TValue extends AnyValue, TKeys extends string> = (
+    IsInvariant<TKeys, string, TValue,
+      TValue['augment'] extends Schema.InternalSchemaMap
+      ? '' extends TKeys
+        ? Value.replace<TValue, setForbiddenKeysInternal<TValue['augment'], TKeys>>
+        : Value.EmptyValue
+      : never
+    >
+  )
+
   // --------------------------------------------------------------------------
   // Helpers
   // --------------------------------------------------------------------------
@@ -286,5 +328,41 @@ export namespace Value {
     TArray extends Schema.InternalArrayType<infer TIsSparse> & (infer TItem)[]
     ? Exclude<TItem | TNewItem, undefined>[] & Schema.InternalArrayType<TIsSparse>
     : never
+  )
+
+  /**
+   * Make some keys of the object optional.
+   * @private
+   */
+  export type setOptionalKeysInternal<TSchemaMap extends Schema.InternalSchemaMap, TKeys extends string> = (
+    Schema.InternalObjectType & {
+      [key in Exclude<keyof TSchemaMap, typeof IS_INTERNAL_OBJECT>]: key extends TKeys
+        ? Schema.from<TSchemaMap[key], Value.optional<Schema.valueType<TSchemaMap[key]>>>
+        : TSchemaMap[key]
+    }
+  )
+
+  /**
+   * Make some keys of the object forbidden.
+   * @private
+   */
+  export type setRequiredKeysInternal<TSchemaMap extends Schema.InternalSchemaMap, TKeys extends string> = (
+    Schema.InternalObjectType & {
+      [key in Exclude<keyof TSchemaMap, typeof IS_INTERNAL_OBJECT>]: key extends TKeys
+        ? Schema.from<TSchemaMap[key], Value.EmptyValue>
+        : TSchemaMap[key]
+    }
+  )
+
+  /**
+   * Make some keys of the object forbidden.
+   * @private
+   */
+  export type setForbiddenKeysInternal<TSchemaMap extends Schema.InternalSchemaMap, TKeys extends string> = (
+    Schema.InternalObjectType & {
+      [key in Exclude<keyof TSchemaMap, typeof IS_INTERNAL_OBJECT>]: key extends TKeys
+        ? Schema.from<TSchemaMap[key], Value.EmptyValue>
+        : TSchemaMap[key]
+    }
   )
 }

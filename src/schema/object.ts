@@ -123,14 +123,15 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    * Sets the specified children to required.
    *
    * @param children - can be a single string value, an array of string values, or each child provided as an argument.
+   * @example
+   * var schema = Joi.object().keys({ a: { b: Joi.number() }, c: { d: Joi.string() } });
+   * var requiredSchema = schema.requiredKeys('', 'a.b', 'c', 'c.d');
    *
-   *   var schema = Joi.object().keys({ a: { b: Joi.number() }, c: { d: Joi.string() } });
-   *   var requiredSchema = schema.requiredKeys('', 'a.b', 'c', 'c.d');
-   *
+   * @description
    * Note that in this example '' means the current object, a is not required but b is, as well as c and d.
    */
-  requiredKeys (children: string[]): this
-  requiredKeys (...children: string[]): this
+  requiredKeys<TKeys extends string[]> (children: TKeys): ObjectSchema<Value.setRequiredKeys<TValue, TKeys[number]>>
+  requiredKeys<TKeys extends string[]> (...children: TKeys): ObjectSchema<Value.setRequiredKeys<TValue, TKeys[number]>>
 
   /**
    * Sets the specified children to optional.
@@ -139,19 +140,20 @@ export interface ObjectSchema<TValue extends Value.AnyValue = Value<Record<any, 
    *
    * The behavior is exactly the same as requiredKeys.
    */
-  optionalKeys (children: string[]): this
-  optionalKeys (...children: string[]): this
+  optionalKeys<TKeys extends string[]> (children: TKeys): ObjectSchema<Value.setOptionalKeys<TValue, TKeys[number]>>
+  optionalKeys<TKeys extends string[]> (...children: TKeys): ObjectSchema<Value.setOptionalKeys<TValue, TKeys[number]>>
 
   /**
    * Sets the specified children to forbidden.
    *
    * @param children - can be a single string value, an array of string values, or each child provided as an argument.
+   * @example
+   * const schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
+   * const optionalSchema = schema.forbiddenKeys('a.b', 'c.d');
    *
-   *   const schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
-   *   const optionalSchema = schema.forbiddenKeys('a.b', 'c.d');
-   *
+   * @description
    * The behavior is exactly the same as requiredKeys.
    */
-  forbiddenKeys (children: string[]): this
-  forbiddenKeys (...children: string[]): this
+  forbiddenKeys<TKeys extends string[]> (children: TKeys): ObjectSchema<Value.setForbiddenKeys<TValue, TKeys[number]>>
+  forbiddenKeys<TKeys extends string[]> (...children: TKeys): ObjectSchema<Value.setForbiddenKeys<TValue, TKeys[number]>>
 }

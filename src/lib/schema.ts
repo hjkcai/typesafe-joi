@@ -22,6 +22,8 @@ export namespace Schema {
   export type SchemaLikeBase = string | number | boolean | null | Schema | SchemaMap
   export type SchemaLike = SchemaLikeBase | SchemaLikeBase[]
 
+  export type InternalSchemaMap = InternalObjectType & { [Key in keyof any]: Schema }
+
   /**
    * The nominal type to mark a plain object as an *internal* schema map.
    * @private Internal use only.
