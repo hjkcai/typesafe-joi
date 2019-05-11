@@ -250,14 +250,16 @@ export namespace Value {
    * - If `T` and `U` both have `InternalSchemaMap` type, merge them.
    * - Otherwise just directly use `U` as the result.
    */
-  export type deepMerge<T extends AnyValue, U extends AnyValue> = replace<T,
-    (IsNever<T['augment'], 0, T['augment']> | IsNever<U['augment'], 0, U['augment']>) extends Schema.InternalSchemaMap
-      ? Schema.deepMergeSchemaMap<
+  export type deepMerge<T extends AnyValue, U extends AnyValue> = (
+    IsNever<T['augment'], 0, T['augment']> extends Schema.InternalSchemaMap
+    ? IsNever<U['augment'], 0, U['augment']> extends Schema.InternalSchemaMap
+      ? replace<U, Schema.deepMergeSchemaMap<
           Extract<T['augment'], Schema.InternalSchemaMap>,
           Extract<U['augment'], Schema.InternalSchemaMap>
-        >
-      : U['augment']
-  >
+        >>
+      : U
+    : U
+  )
 
   /** Make intersection to the augment type of a `Value` with `InternalSchemaMap` and `U`. */
   export type appendSchemaMap<TValue extends AnyValue, U> = (
