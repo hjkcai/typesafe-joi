@@ -216,7 +216,7 @@ export namespace Value {
   export type required<TValue extends AnyValue> = presence<TValue, true>
 
   /** Make a `Value` optional (not required). */
-  export type optional<TValue extends AnyValue> = presence<TValue, true>
+  export type optional<TValue extends AnyValue> = presence<TValue, false>
 
   /** Replace the augment type with the original augment type unioned with `U` */
   export type union<TValue extends AnyValue, U = never> = replace<TValue, TValue['augment'] | U>
