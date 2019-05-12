@@ -19,4 +19,8 @@ export { Cast }
 export type SchemaLike = Schema.SchemaLike
 export type SchemaMap = Schema.SchemaMap
 
+/** Pull the data type out of a schema. */
+export type Literal<TSchemaLike extends SchemaLike> = Schema.literal<TSchemaLike>
+export type SchemaValue<TSchemaLike extends SchemaLike> = Schema.literal<TSchemaLike>
+
 module.exports = require('@hapi/joi')
