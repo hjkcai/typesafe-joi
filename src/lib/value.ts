@@ -12,7 +12,7 @@ export interface Value<
   TAugment = never,
   TAllowed = never,
   TDefault = undefined,
-  TIsRequired extends boolean = false
+  TPresence extends Value.Presence = never
 > {
   /**
    * The base (initial) type of a schema.
@@ -49,7 +49,7 @@ export interface Value<
    * The extra allowed types of a schema.
    *
    * @description
-   * The allowed type is added by `Schema.allow()`, `Schema.valid()`, `Schema.only`, `Schema.equal()`.
+   * The allowed type is added by `Schema.allow()`, `Schema.valid()`, `Schema.only()`, `Schema.equal()`.
    * This type will be the part of the final literal type.
    */
   allowed: TAllowed,
@@ -59,23 +59,28 @@ export interface Value<
    *
    * @description
    * The default type is specified by `Schema.default()`.
-   * This type will be the part of the final literal type if `isRequired` is false.
+   * This type will be the part of the final literal type if `presence` is `Optional` or `never`.
    */
   default: TDefault,
 
   /**
-   * Indicates if the schema is required.
+   * The presence of a schema.
    *
    * @description
-   * The default type will be the part of the final literal type if the schema is required.
-   *
-   * Note: if `TIsRequired` is both `true` and `false` (aka `boolean`), the schema is considered as *NOT* required.
-   * This behavior is to prevent some weird edge cases.
+   * The presence is the same to the presence flag internally defined in joi.
+   * It has 4 valid values: `Optional`, `Required`, `Forbidden`, `never`.
+   * When presense is `never`, it equals to `Optional`.
    */
-  isRequired: TIsRequired
+  presence: TPresence
 }
 
 export namespace Value {
+  export const enum Presence {
+    Optional,
+    Required,
+    Forbidden
+  }
+
   // --------------------------------------------------------------------------
   // Alias
   // --------------------------------------------------------------------------
@@ -85,7 +90,7 @@ export namespace Value {
     /* augment */ unknown,
     /* allowed */ unknown,
     /* default */ unknown,
-    /* isRequired */ boolean
+    /* isRequired */ Value.Presence
   >
 
   export type EmptyValue = Value<
@@ -93,7 +98,7 @@ export namespace Value {
     /* augment */ never,
     /* allowed */ never,
     /* default */ never,
-    /* isRequired */ true
+    /* isRequired */ never
   >
 
   // --------------------------------------------------------------------------
@@ -122,15 +127,25 @@ export namespace Value {
     : never
   )>
 
+  /** Wrap `U` with the presence type. */
+  export type literalPresence<TValue extends AnyValue, U> = (
+    IsNever<TValue['presence'], U | TValue['default'],
+      IsInvariant<TValue['presence'], Presence.Forbidden, never,
+        U | IsInvariant<TValue['presence'], Presence.Required, never, TValue['default']>
+      >
+    >
+  )
+
   /** Get the literal type of a `Value`. */
   export type literal<TValue extends AnyValue> = (
-    | TValue['allowed']
-    | IsTrue<TValue['isRequired'], never, TValue['default']>
-    | IsNever<TValue['augment'], TValue['base'],
-        | transformSchemaMap<Extract<TValue['augment'], Schema.InternalObjectType>>
-        | transformArrayType<Extract<TValue['augment'], Schema.InternalArrayType<any>>>
-        | Exclude<Exclude<TValue['augment'], Schema.InternalObjectType>, Schema.InternalArrayType<any>>
-      >
+    literalPresence<TValue,
+      TValue['allowed']
+      | IsNever<TValue['augment'], TValue['base'],
+          | transformSchemaMap<Extract<TValue['augment'], Schema.InternalObjectType>>
+          | transformArrayType<Extract<TValue['augment'], Schema.InternalArrayType<any>>>
+          | Exclude<Exclude<TValue['augment'], Schema.InternalObjectType>, Schema.InternalArrayType<any>>
+        >
+    >
   )
 
   // --------------------------------------------------------------------------
@@ -143,7 +158,7 @@ export namespace Value {
     /* augment */ isAllowOnly<TValue, never, U>,
     /* allowed */ TValue['allowed'],
     /* default */ TValue['default'],
-    /* isRequired */ TValue['isRequired']
+    /* isRequired */ TValue['presence']
   >
 
   /** Set the extra allowed type of a `Value`. */
@@ -152,7 +167,7 @@ export namespace Value {
     /* augment */ TValue['augment'],
     /* allowed */ TValue['allowed'] | U,
     /* default */ TValue['default'],
-    /* isRequired */ TValue['isRequired']
+    /* isRequired */ TValue['presence']
   >
 
   /**
@@ -164,7 +179,7 @@ export namespace Value {
     /* augment */ never,
     /* allowed */ TValue['allowed'] | U,
     /* default */ TValue['default'],
-    /* isRequired */ TValue['isRequired']
+    /* isRequired */ TValue['presence']
   >
 
   /** Remove types from the allowed type. */
@@ -173,7 +188,7 @@ export namespace Value {
     /* augment */ TValue['augment'],
     /* allowed */ Exclude<TValue['allowed'], U>,
     /* default */ TValue['default'],
-    /* isRequired */ TValue['isRequired']
+    /* isRequired */ TValue['presence']
   >
 
   /** Set the default type of a `Value`. */
@@ -182,11 +197,11 @@ export namespace Value {
     /* augment */ TValue['augment'],
     /* allowed */ TValue['allowed'],
     /* default */ U,
-    /* isRequired */ TValue['isRequired']
+    /* isRequired */ TValue['presence']
   >
 
   /** Set the presence of a `Value`. */
-  export type presence<TValue extends AnyValue, TIsRequired extends boolean> = Value<
+  export type presence<TValue extends AnyValue, TIsRequired extends Value.Presence> = Value<
     /* base */ TValue['base'],
     /* augment */ TValue['augment'],
     /* allowed */ TValue['allowed'],
@@ -205,7 +220,7 @@ export namespace Value {
     ),
     /* allowed */ T['allowed'] | U['allowed'],
     /* default */ IsUndefinedOrNever<U['default'], T['default'], U['default']>,
-    /* isRequired */ U['isRequired']
+    /* isRequired */ IsNever<U['presence'], T['presence'], U['presence']>
   >
 
   // --------------------------------------------------------------------------
@@ -213,10 +228,13 @@ export namespace Value {
   // --------------------------------------------------------------------------
 
   /** Make a `Value` required. */
-  export type required<TValue extends AnyValue> = presence<TValue, true>
+  export type required<TValue extends AnyValue> = presence<TValue, Value.Presence.Required>
 
-  /** Make a `Value` optional (not required). */
-  export type optional<TValue extends AnyValue> = presence<TValue, false>
+  /** Make a `Value` optional. */
+  export type optional<TValue extends AnyValue> = presence<TValue, Value.Presence.Optional>
+
+  /** Make a `Value` forbidden. */
+  export type forbidden<TValue extends AnyValue> = presence<TValue, Value.Presence.Forbidden>
 
   /** Replace the augment type with the original augment type unioned with `U` */
   export type union<TValue extends AnyValue, U = never> = replace<TValue, TValue['augment'] | U>
@@ -349,7 +367,7 @@ export namespace Value {
   export type setRequiredKeysInternal<TSchemaMap extends Schema.InternalSchemaMap, TKeys extends string> = (
     Schema.InternalObjectType & {
       [key in Exclude<keyof TSchemaMap, typeof IS_INTERNAL_OBJECT>]: key extends TKeys
-        ? Schema.from<TSchemaMap[key], Value.EmptyValue>
+      ? Schema.from<TSchemaMap[key], Value.required<Schema.valueType<TSchemaMap[key]>>>
         : TSchemaMap[key]
     }
   )
@@ -361,7 +379,7 @@ export namespace Value {
   export type setForbiddenKeysInternal<TSchemaMap extends Schema.InternalSchemaMap, TKeys extends string> = (
     Schema.InternalObjectType & {
       [key in Exclude<keyof TSchemaMap, typeof IS_INTERNAL_OBJECT>]: key extends TKeys
-        ? Schema.from<TSchemaMap[key], Value.EmptyValue>
+      ? Schema.from<TSchemaMap[key], Value.forbidden<Schema.valueType<TSchemaMap[key]>>>
         : TSchemaMap[key]
     }
   )

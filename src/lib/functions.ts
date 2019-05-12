@@ -152,10 +152,10 @@ export declare function required (): Schemas.AnySchema<Value.required<Value<any>
 export declare function exist(): Schemas.AnySchema<Value.required<Value<any>>>
 
 /** Marks a key as optional which will allow undefined as values. Used to annotate the schema for readability as all keys are optional by default. */
-export declare function optional(): Schemas.AnySchema
+export declare function optional(): Schemas.AnySchema<Value.optional<Value<any>>>
 
 /** Marks a key as forbidden which will not allow any value except undefined. Used to explicitly forbid keys. */
-export declare function forbidden(): Schemas.AnySchema<Value.EmptyValue>
+export declare function forbidden(): Schemas.AnySchema<Value.forbidden<Value<any>>>
 
 /** Marks a key to be removed from a resulting object or array after validation. Used to sanitize output. */
 export declare function strip(): Schemas.AnySchema<Value.EmptyValue>

@@ -115,7 +115,7 @@ export interface BaseSchema<TSchemaType extends string, TValue extends Value.Any
   optional (): SchemaType<TSchemaType, Value.optional<TValue>>
 
   /** Marks a key as forbidden which will not allow any value except undefined. Used to explicitly forbid keys. */
-  forbidden (): SchemaType<TSchemaType, Value<undefined>>
+  forbidden (): SchemaType<TSchemaType, Value.forbidden<TValue>>
 
   /** Marks a key to be removed from a resulting object or array after validation. Used to sanitize output. */
   strip (): SchemaType<TSchemaType, Value.EmptyValue>

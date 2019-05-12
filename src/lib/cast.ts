@@ -1,7 +1,7 @@
 import { Value } from './value';
 import * as Schemas from '../schema'
 
-type CastValue<T> = Value<T, never, never, never, true>
+type CastValue<T> = Value<T, never, never, never, Value.Presence.Required>
 
 /** Cast the value type of a AlternativesSchema. */
 export type Alternatives<T = any> = Schemas.AlternativesSchema<CastValue<T>>
