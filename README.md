@@ -232,7 +232,7 @@ Here is a list of APIs of joi.
 | [`string.truncate([enabled])`](https://github.com/hapijs/joi/blob/master/API.md#stringtruncateenabled) | 🔘 | |
 | [`string.creditCard()`](https://github.com/hapijs/joi/blob/master/API.md#stringcreditcard) | 🔘 | |
 | [`string.length(limit, [encoding])`](https://github.com/hapijs/joi/blob/master/API.md#stringlengthlimit-encoding) | 🔘 | |
-| [`string.regex(pattern, [name | options])`](https://github.com/hapijs/joi/blob/master/API.md#stringregexpattern-name--options) | 🔘 | |
+| [`string.regex(pattern, [options])`](https://github.com/hapijs/joi/blob/master/API.md#stringregexpattern-name--options) | 🔘 | |
 | [`string.replace(pattern, replacement)`](https://github.com/hapijs/joi/blob/master/API.md#stringreplacepattern-replacement) | 🔘 | |
 | [`string.alphanum()`](https://github.com/hapijs/joi/blob/master/API.md#stringalphanum) | 🔘 | |
 | [`string.token()`](https://github.com/hapijs/joi/blob/master/API.md#stringtoken) | 🔘 | |
