@@ -164,9 +164,9 @@ export interface BaseSchema<TSchemaType extends string, TValue extends Value.Any
    */
   default (): this
   default<T = never> (value: JoiLib.Reference, description?: string): SchemaType<TSchemaType, Value.setDefault<TValue, T>>
-  default<TDefault> (value: JoiLib.DefaultFunction<TDefault>, description: string): SchemaType<TSchemaType, Value.setDefault<TValue, TDefault>>
-  default<TDefault> (value: JoiLib.DefaultFunctionWithDescription<TDefault>, description?: string): SchemaType<TSchemaType, Value.setDefault<TValue, TDefault>>
-  default<TDefault> (value: TDefault, description?: string): SchemaType<TSchemaType, Value.setDefault<TValue, TDefault>>
+  default<TDefault extends AnyType> (value: JoiLib.DefaultFunction<TDefault>, description: string): SchemaType<TSchemaType, Value.setDefault<TValue, TDefault>>
+  default<TDefault extends AnyType> (value: JoiLib.DefaultFunctionWithDescription<TDefault>, description?: string): SchemaType<TSchemaType, Value.setDefault<TValue, TDefault>>
+  default<TDefault extends AnyType> (value: TDefault, description?: string): SchemaType<TSchemaType, Value.setDefault<TValue, TDefault>>
 
   /** Converts the type into an alternatives type where the conditions are merged into the type definition. */
   when<T extends JoiLib.WhenIs> (ref: string | JoiLib.Reference, options: T): AlternativesSchema<Schema.valueType<Schema.when<this, T>>>
