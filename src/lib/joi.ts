@@ -32,6 +32,14 @@ export {
   LazyOptions
 } from '@hapi/joi'
 
+export interface DefaultFunction<T> {
+  (context: Joi.Context): T
+}
+
+export interface DefaultFunctionWithDescription<T> extends DefaultFunction<T> {
+  description: string
+}
+
 export interface ValidationResult<T> extends Pick<Promise<T>, 'then' | 'catch'> {
   error: Joi.ValidationError | null;
   value: T;
