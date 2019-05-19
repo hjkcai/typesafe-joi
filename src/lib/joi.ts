@@ -27,7 +27,6 @@ export {
   ValidationErrorItem,
   ValidationErrorFunction,
   Reference,
-  Extension,
   Err,
   LazyOptions
 } from '@hapi/joi'
@@ -46,6 +45,16 @@ export interface ValidationResult<T> extends Pick<Promise<T>, 'then' | 'catch'> 
 }
 
 export type ValidationCallback<T> = (err: Joi.ValidationError, value: T) => void
+
+export interface Extension {
+  name: string;
+  base?: AbstractSchema<any, any>;
+  language?: Joi.LanguageOptions;
+  coerce?(this: ExtensionBoundSchema, value: any, state: Joi.State, options: Joi.ValidationOptions): any;
+  pre?(this: ExtensionBoundSchema, value: any, state: Joi.State, options: Joi.ValidationOptions): any;
+  describe?(this: Schema, description: Joi.Description): Joi.Description;
+  rules?: Rules[];
+}
 
 export interface ExtensionBoundSchema<TValue extends Value.AnyValue = Value.AnyValue> extends AbstractSchema<string, TValue> {
   /**
