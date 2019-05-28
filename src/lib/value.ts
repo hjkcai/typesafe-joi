@@ -112,7 +112,7 @@ export namespace Value {
   export type transformSchemaMap<T extends Schema.InternalObjectType> = IsNever<T, never, MakeOptional<{
     [Key in excludeForbiddenKeys<T>]: (
       T[Key] extends Schema<infer TValue>
-      ? Value.literal<TValue, undefined>
+      ? Value.literal<TValue>
       : never
     )
   }>>
