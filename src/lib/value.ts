@@ -306,7 +306,7 @@ export namespace Value {
     IsInvariant<TKeys, string, TValue,
       TValue['augment'] extends Schema.InternalSchemaMap
       ? '' extends TKeys
-        ? Value.required<Value.replace<TValue, setOptionalKeysInternal<TValue['augment'], TKeys>>>
+        ? Value.required<Value.replace<TValue, setRequiredKeysInternal<TValue['augment'], TKeys>>>
         : Value.replace<TValue, setOptionalKeysInternal<TValue['augment'], TKeys>>
       : never
     >
@@ -320,8 +320,8 @@ export namespace Value {
     IsInvariant<TKeys, string, TValue,
       TValue['augment'] extends Schema.InternalSchemaMap
       ? '' extends TKeys
-        ? Value.replace<TValue, setForbiddenKeysInternal<TValue['augment'], TKeys>>
-        : Value.EmptyValue
+        ? Value.forbidden<Value.replace<TValue, setForbiddenKeysInternal<TValue['augment'], TKeys>>>
+        : Value.replace<TValue, setForbiddenKeysInternal<TValue['augment'], TKeys>>
       : never
     >
   )
