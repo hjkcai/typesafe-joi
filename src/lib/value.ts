@@ -110,9 +110,9 @@ export namespace Value {
    * @private
    */
   export type transformSchemaMap<T extends Schema.InternalObjectType> = IsNever<T, never, MakeOptional<{
-    [Key in Exclude<keyof T, typeof IS_INTERNAL_OBJECT>]: (
+    [Key in excludeForbiddenKeys<T>]: (
       T[Key] extends Schema<infer TValue>
-      ? Value.literal<TValue>
+      ? Value.literal<TValue, undefined>
       : never
     )
   }>>
@@ -128,10 +128,10 @@ export namespace Value {
   )>
 
   /** Wrap `U` with the presence type. */
-  export type literalPresence<TValue extends AnyValue, U> = (
-    IsNever<TValue['presence'], U | TValue['default'],
+  export type literalPresence<TValue extends AnyValue, TLiteral> = (
+    IsNever<TValue['presence'], TLiteral | TValue['default'],
       IsInvariant<TValue['presence'], Presence.Forbidden, never,
-        U | IsInvariant<TValue['presence'], Presence.Required, never, TValue['default']>
+        TLiteral | IsInvariant<TValue['presence'], Presence.Required, never, TValue['default']>
       >
     >
   )
@@ -346,6 +346,14 @@ export namespace Value {
     TArray extends Schema.InternalArrayType<infer TIsSparse> & (infer TItem)[]
     ? Exclude<TItem | TNewItem, undefined>[] & Schema.InternalArrayType<TIsSparse>
     : never
+  )
+
+  /**
+   * Extract object keys without forbidden keys from an internal object type
+   * @private
+   */
+  export type excludeForbiddenKeys<T extends Schema.InternalObjectType> = (
+    { [Key in keyof T]: IsInvariant<Schema.valueType<Extract<T[Key], Schema>>['presence'], Presence.Forbidden, never, Key> }[Exclude<keyof T, typeof IS_INTERNAL_OBJECT>]
   )
 
   /**
