@@ -138,14 +138,18 @@ export namespace Value {
 
   /** Get the literal type of a `Value`. */
   export type literal<TValue extends AnyValue> = (
-    literalPresence<TValue,
-      TValue['allowed']
-      | IsNever<TValue['augment'], TValue['base'],
-          | transformSchemaMap<Extract<TValue['augment'], Schema.InternalObjectType>>
-          | transformArrayType<Extract<TValue['augment'], Schema.InternalArrayType<any>>>
-          | Exclude<Exclude<TValue['augment'], Schema.InternalObjectType>, Schema.InternalArrayType<any>>
+    TValue extends any    // force typescript to handle unions one by one
+    ? (
+        literalPresence<TValue,
+        TValue['allowed']
+        | IsNever<TValue['augment'], TValue['base'],
+            | transformSchemaMap<Extract<TValue['augment'], Schema.InternalObjectType>>
+            | transformArrayType<Extract<TValue['augment'], Schema.InternalArrayType<any>>>
+            | Exclude<Exclude<TValue['augment'], Schema.InternalObjectType>, Schema.InternalArrayType<any>>
+          >
         >
-    >
+      )
+    : never
   )
 
   // --------------------------------------------------------------------------
