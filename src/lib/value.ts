@@ -157,75 +157,103 @@ export namespace Value {
   // --------------------------------------------------------------------------
 
   /** Replace the augment type of `TValue` with `U` */
-  export type replace<TValue extends AnyValue, U = never> = Value<
-    /* base */ TValue['base'],
-    /* augment */ isAllowOnly<TValue, never, U>,
-    /* allowed */ TValue['allowed'],
-    /* default */ TValue['default'],
-    /* isRequired */ TValue['presence']
-  >
+  export type replace<TValue extends AnyValue, U = never> = (
+    TValue extends any
+    ? Value<
+        /* base */ TValue['base'],
+        /* augment */ isAllowOnly<TValue, never, U>,
+        /* allowed */ TValue['allowed'],
+        /* default */ TValue['default'],
+        /* isRequired */ TValue['presence']
+      >
+    : never
+  )
 
   /** Set the extra allowed type of a `Value`. */
-  export type allow<TValue extends AnyValue, U = never> = Value<
-    /* base */ TValue['base'],
-    /* augment */ TValue['augment'],
-    /* allowed */ TValue['allowed'] | U,
-    /* default */ TValue['default'],
-    /* isRequired */ TValue['presence']
-  >
+  export type allow<TValue extends AnyValue, U = never> = (
+    TValue extends any
+    ? Value<
+        /* base */ TValue['base'],
+        /* augment */ TValue['augment'],
+        /* allowed */ TValue['allowed'] | U,
+        /* default */ TValue['default'],
+        /* isRequired */ TValue['presence']
+      >
+    : never
+  )
 
   /**
    * Set the only allowed type of a `Value`.
    * @description This removes the base type and the augment type
    */
-  export type allowOnly<TValue extends AnyValue, U = never> = Value<
-    /* base */ never,
-    /* augment */ never,
-    /* allowed */ TValue['allowed'] | U,
-    /* default */ TValue['default'],
-    /* isRequired */ TValue['presence']
-  >
+  export type allowOnly<TValue extends AnyValue, U = never> = (
+    TValue extends any
+    ? Value<
+        /* base */ never,
+        /* augment */ never,
+        /* allowed */ TValue['allowed'] | U,
+        /* default */ TValue['default'],
+        /* isRequired */ TValue['presence']
+      >
+    : never
+  )
 
   /** Remove types from the allowed type. */
-  export type disallow<TValue extends AnyValue, U = never> = Value<
-    /* base */ TValue['base'],
-    /* augment */ TValue['augment'],
-    /* allowed */ Exclude<TValue['allowed'], U>,
-    /* default */ TValue['default'],
-    /* isRequired */ TValue['presence']
-  >
+  export type disallow<TValue extends AnyValue, U = never> = (
+    TValue extends any
+    ? Value<
+        /* base */ TValue['base'],
+        /* augment */ TValue['augment'],
+        /* allowed */ Exclude<TValue['allowed'], U>,
+        /* default */ TValue['default'],
+        /* isRequired */ TValue['presence']
+      >
+    : never
+  )
 
   /** Set the default type of a `Value`. */
-  export type setDefault<TValue extends AnyValue, U = never> = Value<
-    /* base */ TValue['base'],
-    /* augment */ TValue['augment'],
-    /* allowed */ TValue['allowed'],
-    /* default */ U,
-    /* isRequired */ TValue['presence']
-  >
+  export type setDefault<TValue extends AnyValue, U = never> = (
+    TValue extends any
+    ? Value<
+        /* base */ TValue['base'],
+        /* augment */ TValue['augment'],
+        /* allowed */ TValue['allowed'],
+        /* default */ U,
+        /* isRequired */ TValue['presence']
+      >
+    : never
+  )
 
   /** Set the presence of a `Value`. */
-  export type presence<TValue extends AnyValue, TIsRequired extends Value.Presence> = Value<
-    /* base */ TValue['base'],
-    /* augment */ TValue['augment'],
-    /* allowed */ TValue['allowed'],
-    /* default */ TValue['default'],
-    /* isRequired */ TIsRequired
-  >
+  export type presence<TValue extends AnyValue, TIsRequired extends Value.Presence> = (
+    TValue extends any
+    ? Value<
+        /* base */ TValue['base'],
+        /* augment */ TValue['augment'],
+        /* allowed */ TValue['allowed'],
+        /* default */ TValue['default'],
+        /* isRequired */ TIsRequired
+      >
+    : never
+  )
 
   /** Merge two a value types by adding the rules of one type to another. */
-  export type concat<T extends AnyValue, U extends AnyValue> = Value<
-    /* base */ IsAny<T['base'], IsAny<U['base'], any, U['base']>, T['base']>,
-    /* augment */ (
-      | Schema.deepConcatSchemaMap<Extract<T['augment'], Schema.InternalObjectType>, Extract<U['augment'], Schema.InternalObjectType>>
-      | mergeArrayOnly<Extract<T['augment'], Schema.InternalArrayType<any>>, ArrayItemType<Extract<U['augment'], Schema.InternalArrayType<any>>>>
-      | Exclude<Exclude<T['augment'], Schema.InternalObjectType>, Schema.InternalArrayType<any>>
-      | Exclude<Exclude<U['augment'], Schema.InternalObjectType>, Schema.InternalArrayType<any>>
-    ),
-    /* allowed */ T['allowed'] | U['allowed'],
-    /* default */ IsUndefinedOrNever<U['default'], T['default'], U['default']>,
-    /* isRequired */ IsNever<U['presence'], T['presence'], U['presence']>
-  >
+  export type concat<T extends AnyValue, U extends AnyValue> = (
+    T extends any
+    ? Value<
+        /* base */ IsAny<T['base'], IsAny<U['base'], any, U['base']>, T['base']>,
+        /* augment */ (
+          | Schema.deepConcatSchemaMap<Extract<T['augment'], Schema.InternalObjectType>, Extract<U['augment'], Schema.InternalObjectType>>
+          | mergeArrayOnly<Extract<T['augment'], Schema.InternalArrayType<any>>, ArrayItemType<Extract<U['augment'], Schema.InternalArrayType<any>>>>
+          | Exclude<Exclude<T['augment'], Schema.InternalObjectType>, Schema.InternalArrayType<any>>
+          | Exclude<Exclude<U['augment'], Schema.InternalObjectType>, Schema.InternalArrayType<any>>
+        ),
+        /* allowed */ T['allowed'] | U['allowed'],
+        /* default */ IsUndefinedOrNever<U['default'], T['default'], U['default']>,
+        /* isRequired */ IsNever<U['presence'], T['presence'], U['presence']>
+      >
+    : never
+  )
 
   // --------------------------------------------------------------------------
   // Value manipulation
