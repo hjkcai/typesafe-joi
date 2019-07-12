@@ -56,6 +56,11 @@ export interface ValidationResultUnchecked<T> {
   value: T extends { [key: string]: any } ? { [key in keyof T]?: T[key] } : T;
 }
 
+export type ValidationResult<T> =
+  | ValidationResultUnchecked<T>
+  | ValidationResultError<T>
+  | ValidationResultSuccess<T>;
+
 export type ValidationCallback<T> = (err: Joi.ValidationError, value: T) => void
 
 export interface Extension {
