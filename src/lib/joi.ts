@@ -39,9 +39,21 @@ export interface DefaultFunctionWithDescription<T> extends DefaultFunction<T> {
   description: string
 }
 
-export interface ValidationResult<T> extends Pick<Promise<T>, 'then' | 'catch'> {
-  error: Joi.ValidationError | null;
+export interface ValidationResultSuccess<T> extends Pick<Promise<T>, 'then' | 'catch'> {
+  error: null;
   value: T;
+}
+
+export interface ValidationResultError<T> {
+  error: Joi.ValidationError;
+  // Make sure the keys exist so destructing works
+  value: T extends { [key: string]: any } ? { [key in keyof T]: undefined } : undefined;
+}
+
+export interface ValidationResultUnchecked<T> {
+  error: Joi.ValidationError;
+  // Make sure the keys exist so destructing works and change the values to possibly undefined
+  value: T extends { [key: string]: any } ? { [key in keyof T]?: T[key] } : T;
 }
 
 export type ValidationCallback<T> = (err: Joi.ValidationError, value: T) => void
