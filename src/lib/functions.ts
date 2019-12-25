@@ -158,7 +158,7 @@ export declare function optional(): Schemas.AnySchema<Value.optional<Value<any>>
 export declare function forbidden(): Schemas.AnySchema<Value.forbidden<Value<any>>>
 
 /** Marks a key to be removed from a resulting object or array after validation. Used to sanitize output. */
-export declare function strip(): Schemas.AnySchema<Value.EmptyValue>
+export declare function strip(): Schemas.AnySchema<Value.forbidden<Value<any>>>
 
 /** Annotates the key. */
 export declare function description(desc: string): Schemas.AnySchema

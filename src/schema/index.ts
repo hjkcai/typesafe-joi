@@ -118,7 +118,7 @@ export interface BaseSchema<TSchemaType extends string, TValue extends Value.Any
   forbidden (): SchemaType<TSchemaType, Value.forbidden<TValue>>
 
   /** Marks a key to be removed from a resulting object or array after validation. Used to sanitize output. */
-  strip (): SchemaType<TSchemaType, Value.EmptyValue>
+  strip (): SchemaType<TSchemaType, Value.forbidden<TValue>>
 
   /** Annotates the key. */
   description (desc: string): this
